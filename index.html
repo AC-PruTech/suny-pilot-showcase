@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>SUNY Pilot — Build Showcase</title>
+<meta name="description" content="SUNY Pilot build showcase — fictional sample prototype linking the learner community, backend Lightning console, BRE rules engine, interactive BRE mock, marketing email templates, and data & docs. Sample data only, not official SUNY.">
+<style>
+:root{--navy:#102a43;--navy2:#0a1f33;--navy3:#1a3f5f;--gold:#f5c542;--gold-dark:#c99700;--cream:#faf7ef;--ink:#102a43;--text:#243b53;--muted:#5b6b7c;--line:#d8dee6;--bg:#f3f5f8;--card:#fff;--ok:#137547;--radius:14px;--shadow:0 10px 28px rgba(16,42,67,.14),0 2px 6px rgba(16,42,67,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Salesforce Sans",Arial,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+/* Scroll guard: the document itself (not a fixed-height wrapper) is the scroller. Explicitly overrides any embedding viewer/iframe or CDN stylesheet (e.g. SLDS) that constrains html/body with height:100%/overflow:hidden — which renders a scrollbar yet leaves content below the fold unreachable. Sticky header remains sticky; no overlay intercepts wheel/touch over content. */
+html{height:auto!important;min-height:100%;overflow-y:auto!important}
+body{height:auto!important;min-height:100vh;overflow-y:visible!important;overflow-x:clip;position:static;touch-action:auto;-webkit-overflow-scrolling:touch}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.55}
+a{color:#0b5cab}a:hover{color:#014486}:focus-visible{outline:3px solid #0176d3;outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--navy);color:#fff;padding:10px 16px;z-index:99;border-radius:0 0 8px 0}.skip:focus{left:0}
+/* Top nav */
+.topnav{background:var(--navy);border-bottom:4px solid var(--gold);position:sticky;top:0;z-index:50}
+.topnav-in{max-width:1180px;margin:0 auto;padding:0 20px;min-height:62px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:#fff}
+.mark{width:40px;height:40px;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:18px;border-radius:9px;flex-shrink:0}
+.brand b{font-size:17px;line-height:1.05;display:block}.brand span{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.topnav nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.topnav nav a{color:#dbe6f2;text-decoration:none;font-weight:600;font-size:13.5px;padding:8px 11px;border-radius:7px}
+.topnav nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+/* Hero */
+.hero{background:var(--navy2);color:#fff}
+.hero-in{max-width:1180px;margin:0 auto;padding:34px 20px 38px;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}
+.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;margin:0 0 10px}
+.hero h1{font-size:42px;line-height:1.08;margin:0 0 14px;font-weight:800;letter-spacing:-.01em}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lede{font-size:17px;color:#dbe6f2;margin:0 0 16px;max-width:56ch}
+.disclaimer{background:rgba(245,197,66,.13);border:1px solid rgba(245,197,66,.55);border-radius:10px;padding:12px 14px;font-size:13.5px;color:#fdf3d7;margin:0 0 14px}
+.lwr{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:12px 14px;font-size:13.5px;color:#e8eef5;margin:0 0 20px}
+.lwr b{color:#fff}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font-weight:700;padding:11px 18px;border-radius:8px;font-size:14.5px}
+.btn-gold{background:var(--gold);color:var(--navy)}.btn-gold:hover{background:#ffd968;color:var(--navy)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55)}.btn-ghost:hover{background:rgba(255,255,255,.12);color:#fff}
+.hero-fig{margin:0}
+.hero-fig img{width:100%;height:100%;max-height:340px;object-fit:cover;border-radius:14px;border:3px solid rgba(245,197,66,.65);box-shadow:var(--shadow);display:block}
+.hero-fig figcaption{font-size:12px;color:#9fb3c8;margin-top:8px}
+/* Layout */
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 10px}
+h2.sec{color:var(--navy);font-size:24px;margin:26px 0 6px}
+p.sec-sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
+/* Start here */
+.path{list-style:none;counter-reset:step;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.path li{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(16,42,67,.06)}
+.path .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--gold);font-weight:900;margin-bottom:9px}
+.path h3{margin:0 0 6px;font-size:15.5px}.path h3 a{color:var(--navy);text-decoration:none}.path h3 a:hover{text-decoration:underline}
+.path p{margin:0;font-size:13.5px;color:var(--muted)}
+.path .go{display:inline-block;margin-top:10px;font-weight:700;font-size:13.5px;text-decoration:none}
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:8px}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--navy);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(16,42,67,.06)}
+.card.gold{border-top-color:var(--gold)}
+.card .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark);font-weight:800;margin:0 0 7px}
+.card h3{margin:0 0 8px;font-size:18px;line-height:1.25}.card h3 a{color:var(--navy);text-decoration:none}.card h3 a:hover{text-decoration:underline}
+.card p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.card ul{margin:0 0 14px;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.card .go{font-weight:700;text-decoration:none;font-size:14.5px}
+.card .sublinks{font-size:13.5px;margin-top:8px;line-height:1.7}
+.card .sublinks a{font-weight:600}
+/* Docs */
+.docs{background:var(--navy);border-radius:var(--radius);padding:22px;color:#dbe6f2;margin:8px 0 6px}
+.docs h3{color:#fff;margin:0 0 4px;font-size:19px}
+.docs p{margin:0 0 14px;font-size:14px;color:#b9c9da}
+.docs ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.docs li{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:13px 15px}
+.docs li b{color:#fff;display:block;font-size:14.5px}
+.docs li span{font-size:13px;color:#b9c9da;display:block;margin:3px 0 7px}
+.docs a{color:var(--gold);font-weight:700;text-decoration:none;font-size:13.5px}.docs a:hover{text-decoration:underline}
+.note-box{background:#fff8db;border:1px solid #e6c87a;border-radius:10px;padding:13px 15px;font-size:13.5px;color:#5c4a08;margin:18px 0}
+footer{background:var(--navy2);color:#9fb3c8;margin-top:34px}
+footer .wrap{padding:24px 20px 30px}
+footer b{color:#fff}footer a{color:var(--gold)}
+footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
+@media(max-width:960px){.hero-in{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.path{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}}
+@media(max-width:600px){.cards,.path,.docs ul{grid-template-columns:1fr}.topnav nav{margin-left:0}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="topnav">
+  <div class="topnav-in">
+    <a class="brand" href="site.html" aria-label="SUNY Pilot Build Showcase — home">
+      <span class="mark" aria-hidden="true">S</span>
+      <span><b>SUNY Pilot</b><span>Build Showcase</span></span>
+    </a>
+    <nav aria-label="Showcase">
+      <a href="#start">Start here</a>
+      <a href="community.html">Community</a>
+      <a href="backend-lightning.html">Backend</a>
+      <a href="backend-lightning.html#bre">BRE</a>
+      <a href="bre-mock.html">BRE Mock</a>
+      <a href="#marketing">Marketing</a>
+      <a href="#docs">Data &amp; Docs</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <div>
+      <p class="eyebrow">SUNY Pilot · Build Showcase</p>
+      <h1>One pilot, <em>every prototype</em> in one place.</h1>
+      <p class="lede">Browse the learner community, run the rules engine, and check the backend record — a connected walkthrough of the SUNY Pilot continuing-education build, from discovery and checkout to employer-sponsored payment.</p>
+      <p class="disclaimer"><strong>Fictional sample — not official SUNY.</strong> SUNY campus names are public; every learner, course, price, seat, and record on these pages is invented pilot sample data. Nothing here connects to a Salesforce org, submits, enrols, or charges anyone.</p>
+      <p class="lwr"><b>Single custom LWR community:</b> the learner experience is designed as <b>one</b> Experience Cloud site on a <b>custom LWR template</b> — 64 campuses handled by campus filtering and audience targeting, with guest prospects and authenticated learners in the same site. LWC-only, SLDS&nbsp;2. It is not an LMS.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#start">Start the guided path ↓</a>
+        <a class="btn btn-ghost" href="community.html">Open the community prototype</a>
+      </div>
+    </div>
+    <figure class="hero-fig">
+      <img src="images/students-discover-hero.jpg" alt="Students on a campus — sample header photo reused from the community prototype">
+      <figcaption>Sample photo reused from the community prototype (<code>images/students-discover-hero.jpg</code>). Fictional pilot imagery.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<main class="wrap" id="main">
+
+  <h2 class="sec" id="start">Start here — guided path</h2>
+  <p class="sec-sub">Four stops, in order. Each opens in this same tab; use the “← Showcase home” link at the top of the prototype pages (or your back button) to return here.</p>
+  <ol class="path">
+    <li>
+      <span class="n" aria-hidden="true">1</span>
+      <h3><a href="community.html">Browse the community</a></h3>
+      <p>Start in Discover: filter across the 64 SUNY campuses, open a non-credit CE course, and walk through checkout.</p>
+      <a class="go" href="community.html">Step 1 · Community →</a>
+    </li>
+    <li>
+      <span class="n" aria-hidden="true">2</span>
+      <h3><a href="bre-mock.html">Run the BRE mock — employer scenario</a></h3>
+      <p>The interactive mock opens on “Employer-sponsored seat”: change the employer, price, or caps and watch the employer / learner split recompute.</p>
+      <a class="go" href="bre-mock.html">Step 2 · BRE mock →</a>
+    </li>
+    <li>
+      <span class="n" aria-hidden="true">3</span>
+      <h3><a href="backend-lightning.html#psspayment">See the backend PSS record</a></h3>
+      <p>Follow that employer payment into the Lightning console: PSS record <b>PSS-PAY-2026-1049</b>, record type <b>Employer_Sponsored</b>.</p>
+      <a class="go" href="backend-lightning.html#psspayment">Step 3 · PSS record →</a>
+    </li>
+    <li>
+      <span class="n" aria-hidden="true">4</span>
+      <h3><a href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Read the mapping workbook</a></h3>
+      <p>Finish with the field / object mapping workbook that ties the community, BRE decisions, and PSS records together.</p>
+      <a class="go" href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Step 4 · Workbook →</a>
+    </li>
+  </ol>
+
+  <h2 class="sec">The prototypes</h2>
+  <p class="sec-sub">Everything below is a static, self-contained prototype in this folder — no build step, no server-side code, no org connection.</p>
+
+  <div class="cards">
+    <article class="card">
+      <p class="kicker">1 · Learner experience</p>
+      <h3><a href="community.html">Community Prototype</a></h3>
+      <p>The SUNY Pilot learner community: Discover across <b>64 campuses</b>, non-credit / CE-first course catalogue (plus for-credit context), learner home, programs, payments, support — and a simulated checkout that charges nothing.</p>
+      <ul><li>Discover &amp; campus filtering (64 SUNY campuses)</li><li>Non-credit CE detail, CEUs, flat-fee pricing</li><li>Checkout, learner home &amp; support views</li></ul>
+      <a class="go" href="community.html">Open index.html →</a>
+      <p class="sublinks">Older framed wrapper: <a href="community.html">community.html</a> (legacy Hartwell-titled viewer around the same community — superseded by this showcase; kept for reference).</p>
+    </article>
+
+    <article class="card">
+      <p class="kicker">2 · Staff experience</p>
+      <h3><a href="backend-lightning.html">Backend Lightning Console</a></h3>
+      <p>An Education Cloud–style Lightning console mirror: workspace queues, Learner 360, Application, Program Enrollment, Case, Product2 (CE course), Financial Aid Award, PSS State Payment, and Order records.</p>
+      <ul><li>Standard-first objects &amp; record pages</li><li>PSS payment by record type (Employer_Sponsored / Degree_Financial_Aid / State_Workforce_Funding)</li></ul>
+      <a class="go" href="backend-lightning.html">Open backend-lightning.html →</a>
+    </article>
+
+    <article class="card gold">
+      <p class="kicker">3 · Decision layer</p>
+      <h3><a href="backend-lightning.html#bre">BRE Rules Engine</a></h3>
+      <p>The Business Rules Engine tab inside the backend console: the <b>SUNY_CE_Eligibility</b> rule-set showcase, sample decision tables, and an in-page decision checker whose result is (in-org, conceptually) stored on the Order as decision + reason + version.</p>
+      <ul><li>Expression Sets + Decision Tables (concept)</li><li>Confirm BRE licence / API in-org</li></ul>
+      <a class="go" href="backend-lightning.html#bre">Open backend-lightning.html#bre →</a>
+    </article>
+
+    <article class="card gold">
+      <p class="kicker">4 · Interactive sandbox</p>
+      <h3><a href="bre-mock.html">Interactive BRE Mock <span style="font-weight:600;font-size:13px">(from Edu Atlas)</span></a></h3>
+      <p>A hands-on rules sandbox patterned on the Edu Atlas BRE mock and remapped to SUNY rule sets: employer sponsorship splits, funding stacks, refunds, pricing, go/no-go cohorts, Workforce Pell checks, and more. Edit the decision tables and re-run.</p>
+      <ul><li>Opens on the employer-sponsored seat scenario</li><li>Shows the Salesforce / PSS routing for each result</li></ul>
+      <a class="go" href="bre-mock.html">Open bre-mock.html →</a>
+    </article>
+
+    <article class="card" id="marketing">
+      <p class="kicker">5 · Marketing Cloud</p>
+      <h3><a href="marketing-cloud/">Marketing Email Templates</a></h3>
+      <p>Sample CE journey emails (navy #102a43 / gold #f5c542) to rebuild in Content Builder — welcome, course-fit, enrolment confirmation, reminders, waitlist, certificate, and the employer sponsor packet. One Marketing Cloud account, a business unit per campus (concept).</p>
+      <p class="sublinks">
+        <a href="marketing-cloud/ce-lead-welcome.html">ce-lead-welcome.html</a><br>
+        <a href="marketing-cloud/ce-enrollment-confirmation.html">ce-enrollment-confirmation.html</a><br>
+        <a href="marketing-cloud/employer-sponsor-packet.html">employer-sponsor-packet.html</a><br>
+        <a href="marketing-cloud/journey-email-map.md">journey-email-map.md</a> · <a href="marketing-cloud/">all templates →</a>
+      </p>
+      <a class="go" href="marketing-cloud/">Browse marketing-cloud/ →</a>
+    </article>
+
+    <article class="card" id="docs-card">
+      <p class="kicker">6 · Data &amp; docs</p>
+      <h3><a href="#docs">Data &amp; Docs</a></h3>
+      <p>The supporting artefacts behind the prototypes: the Lucid data-model diagram, the mapping workbook, the showcase deck, and the execution document. These are the verified links from the pilot work — they open the live Google / Lucid files.</p>
+      <ul><li>Lucid — data model / ERD view</li><li>Google Sheets — mapping workbook</li><li>Google Slides — deck · Google Docs — execution doc</li></ul>
+      <a class="go" href="#docs">Jump to Data &amp; Docs ↓</a>
+    </article>
+  </div>
+
+  <section class="docs" id="docs" aria-labelledby="docs-h">
+    <h3 id="docs-h">Data &amp; Docs</h3>
+    <p>Verified links from the SUNY Pilot work. External files — sign-in may be required, and contents there are working documents, not part of this static prototype.</p>
+    <ul>
+      <li>
+        <b>Lucid — data model diagram</b>
+        <span>Lucidchart view of the pilot data model behind the community, BRE, and PSS design.</span>
+        <a href="https://lucid.app/lucidchart/a300e109-1ce1-44e0-8c61-615b32328951/view">Open in Lucid →</a>
+      </li>
+      <li>
+        <b>Google Sheets — mapping workbook</b>
+        <span>Field / object mapping workbook (guided-path step 4) tying community, BRE decisions, and PSS records together.</span>
+        <a href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Open the workbook →</a>
+      </li>
+      <li>
+        <b>Google Slides — deck</b>
+        <span>The SUNY Pilot showcase / build deck.</span>
+        <a href="https://docs.google.com/presentation/d/1nYzZ-t6hQTCCXyLaJTQaqmzb_DSaaMCfkWcFfWroy7g/edit">Open the deck →</a>
+      </li>
+      <li>
+        <b>Google Docs — execution doc</b>
+        <span>The execution document for the pilot build.</span>
+        <a href="https://docs.google.com/document/d/1hxl6ETIsBIIAVLgHO2pHYCAeQkzIt_9e8GdU8hKS_mg/edit">Open the execution doc →</a>
+      </li>
+    </ul>
+  </section>
+
+  <div class="note-box" role="note"><b>How to run this locally:</b> serve this folder with <code>python3 -m http.server 8766</code> and open the published root URL — or simply open <code>site.html</code> from the file system; every internal link is relative and works from <code>file://</code> too.</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>SUNY Pilot — Build Showcase.</b> Sample / fictional prototype only — <b>not official SUNY</b>, not a SUNY website, and not connected to any Salesforce org or SUNY system. SUNY campus names are public; all learners, courses, prices, seats, employers, and records shown are invented pilot sample data.</p>
+    <p><b>Rename note:</b> this pilot was originally drafted as “Hartwell” (Hartwell College / Hartwell University) and renamed to the SUNY Pilot. A few legacy artefacts — notably <a href="community.html">community.html</a>, the older framed wrapper around the community prototype — may still carry the Hartwell name; treat those as pre-rename drafts of the same pilot.</p>
+    <p>Design: SLDS-style navy <code>#102a43</code> / gold <code>#f5c542</code> · Single custom LWR community (concept) · <a href="site.html">← Back to showcase home</a></p>
+  </div>
+</footer>
+</body>
+</html>

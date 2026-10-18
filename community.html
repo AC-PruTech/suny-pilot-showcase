@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SUNY Pilot — Learner Portal | Campus Community</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Salesforce Experience Cloud learner community prototype — Education Cloud, Commerce Cloud, Marketing Cloud and Public Sector Solutions. Sample data only.">
+<!-- SLDS 2 via CDN (progressive enhancement; strong local Cosmos fallback below ensures offline rendering) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.25.2/styles/salesforce-lightning-design-system.min.css">
+<style>
+/* ============ SLDS 2 / COSMOS TOKENS (local fallback) ============ */
+:root{
+ --blue:#0176d3; --blue-dark:#032d60; --blue-mid:#0b5cab; --blue-hover:#014486;
+ --cloud:#eef4ff; --cloud-2:#d8e6fe; --sky:#57a8e8;
+ --brand:#102a43; --brand-dark:#0a1f33; --brand-2:#1a3f5f; --gold:#c99700; --gold-bg:#f5c542; --gold-light:#fdf3d7; --cream:#faf7ef; --ink:#102a43; --text:#181818; --muted:#5c5c5c; --muted2:#706e6b;
+ --bg:#f3f3f3; --card:#fff; --border:#e5e5e5; --border2:#c9c9c9;
+ --success:#2e844a; --success-bg:#ecfdf3; --warning:#93360b; --warning-bg:#fef1e6; --warning-border:#fe9339;
+ --error:#ba0517; --error-bg:#fef1f1; --info-bg:#eef4ff;
+ --radius:12px; --radius-s:8px;
+ --shadow:0 2px 2px rgba(0,0,0,.08),0 0 2px rgba(0,0,0,.06);
+ --shadow-lg:0 12px 32px rgba(3,45,96,.18),0 2px 8px rgba(3,45,96,.10);
+ --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Salesforce Sans",Arial,sans-serif;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+/* Scroll guard: the document itself (not a fixed-height wrapper) is the scroller. Explicitly overrides any embedding viewer/iframe or CDN stylesheet (e.g. SLDS) that constrains html/body with height:100%/overflow:hidden — which renders a scrollbar yet leaves content below the fold unreachable. Sticky header remains sticky; no overlay intercepts wheel/touch over content. */
+html{height:auto!important;min-height:100%;overflow-y:auto!important}
+body{height:auto!important;min-height:100vh;overflow-y:visible!important;overflow-x:clip;position:static;touch-action:auto;-webkit-overflow-scrolling:touch}
+body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg);font-size:15px;line-height:1.5}
+a{color:var(--blue)} a:hover{color:var(--blue-hover)}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--blue-dark);color:#fff;padding:10px 16px;z-index:99;border-radius:0 0 8px 0}
+.skip:focus{left:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* Header */
+.global{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.global-in{max-width:1280px;margin:0 auto;padding:0 20px;height:64px;display:flex;align-items:center;gap:18px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);flex-shrink:0}
+.logo-mark{width:42px;height:42px;background:var(--brand);border:2px solid var(--gold-bg);border-radius:10px;display:grid;place-items:center;color:var(--gold-bg);font-weight:900;font-size:16px}
+.logo b{font-size:18px;line-height:1;color:var(--ink);display:block}
+.logo span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:700}
+.search{flex:1;max-width:460px;position:relative}
+.search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border2);border-radius:20px;background:#f9fafb}
+.search svg{position:absolute;left:12px;top:10px}
+.utils{margin-left:auto;display:flex;align-items:center;gap:6px}
+.icon-btn{width:40px;height:40px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#444;position:relative}
+.icon-btn:hover{background:var(--cloud)}
+.dot{position:absolute;top:4px;right:4px;background:#ba0517;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 4px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--blue-dark);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;border:2px solid var(--cloud-2);cursor:pointer}
+.subnav{background:var(--brand-dark);color:#fff}
+.subnav-in{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.subnav button{background:none;border:0;color:#cfe6ff;padding:13px 16px;cursor:pointer;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent}
+.subnav button[aria-selected="true"]{color:#fff;border-bottom-color:var(--gold-bg);background:rgba(255,255,255,.08)}
+.subnav button:hover{color:#fff;background:rgba(255,255,255,.06)}
+.sample-bar{background:#fff7e6;border-bottom:1px solid #f5d48e;color:#6b4e00;font-size:13px;text-align:center;padding:7px 16px}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 56px}
+html:not(.js-enabled) .view{display:block}
+html.js-enabled .view{display:none}
+html.js-enabled .view.active{display:block;animation:fade .25s ease}
+html:not(.js-enabled) .checkout-step{display:block;margin-bottom:16px}
+html.js-enabled .checkout-step{display:none}
+html.js-enabled .checkout-step.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* Hero */
+.hero{background:linear-gradient(110deg,var(--brand-dark) 0%,var(--brand) 55%,var(--brand-2) 100%);border-bottom:6px solid var(--gold);color:#fff;border-radius:20px;padding:44px 42px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-70px;top:-70px;width:340px;height:340px;background:rgba(255,255,255,.10);border-radius:50%}
+.hero:before{content:"";position:absolute;right:120px;bottom:-110px;width:240px;height:240px;background:rgba(135,199,255,.25);border-radius:50%}
+.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:12px;font-weight:800;color:var(--gold-bg)}
+.hero h1{font-size:42px;line-height:1.05;margin:10px 0 12px;max-width:640px;position:relative;z-index:1}
+.hero p{max-width:620px;color:#dbeeff;font-size:17px;position:relative;z-index:1}
+.hero-search{display:flex;gap:10px;max-width:660px;margin-top:22px;position:relative;z-index:1;flex-wrap:wrap}
+.hero-search input,.hero-search select{padding:13px 16px;border:0;border-radius:10px;flex:1;min-width:200px;color:#181818;background:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer;border:1px solid transparent;text-decoration:none;font-size:14px;justify-content:center}
+.btn-brand{background:var(--brand);color:#fff}.btn-brand:hover{background:var(--brand-dark);color:#fff}
+.btn-gold{background:var(--gold-bg);color:var(--brand-dark)}.btn-gold:hover{background:#ffd75e;color:var(--brand-dark)}
+.btn-white{background:#fff;color:var(--blue-dark)}.btn-white:hover{background:var(--cloud)}
+.btn-outline{background:#fff;color:var(--brand);border-color:var(--brand)}
+.btn-neutral{background:#fff;color:var(--text);border-color:var(--border2)}
+.btn-sm{padding:7px 12px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.stat b{font-size:26px;color:var(--ink);display:block}.stat span{color:var(--muted);font-size:13px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:28px 0 14px;flex-wrap:wrap}
+.section-head h2{margin:0;font-size:24px;color:var(--ink)} .section-head p{margin:4px 0 0;color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.pill{border:1px solid var(--border2);background:#fff;border-radius:20px;padding:8px 14px;cursor:pointer;font-weight:600}
+.pill[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.card h3{margin:0 0 6px;color:var(--ink);font-size:17px}
+.program{display:flex;flex-direction:column;gap:10px}
+.program-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:800;letter-spacing:.02em;background:var(--cloud);color:var(--blue-dark);border:1px solid var(--cloud-2)}
+.badge.green{background:var(--success-bg);color:var(--success);border-color:#a6e8bb}
+.badge.amber{background:var(--warning-bg);color:var(--warning);border-color:#fec98a}
+.badge.red{background:var(--error-bg);color:var(--error);border-color:#ffb3b3}
+.badge.grey{background:#f3f3f3;color:#444;border-color:#ddd}
+.meta{color:var(--muted);font-size:13px;display:flex;gap:12px;flex-wrap:wrap}
+.price{font-size:20px;font-weight:800;color:var(--ink)} .price small{font-size:12px;color:var(--muted);font-weight:500}
+.card-actions{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+/* Learner layout */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+.welcome{background:linear-gradient(110deg,var(--brand-dark),var(--brand-2));border-bottom:5px solid var(--gold);color:#fff;border-radius:16px;padding:26px}
+.welcome h2{margin:4px 0;font-size:28px}.welcome p{color:#dbeeff;margin:0}
+.ring-wrap{display:flex;gap:20px;align-items:center}
+.ring{width:118px;height:118px;border-radius:50%;background:conic-gradient(var(--blue) 0 68%,#e5e5e5 68% 100%);display:grid;place-items:center;flex-shrink:0}
+.ring-in{width:88px;height:88px;background:#fff;border-radius:50%;display:grid;place-items:center;text-align:center}
+.ring-in b{font-size:22px;color:var(--ink);display:block;line-height:1}.ring-in span{font-size:11px;color:var(--muted)}
+.progress{height:10px;background:#e9ecef;border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.progress i{display:block;height:100%;background:var(--blue);border-radius:6px}
+.progress.green i{background:var(--success)}
+.alert{border-radius:10px;padding:14px 16px;display:flex;gap:12px;margin-bottom:12px;border:1px solid}
+.alert.warn{background:var(--warning-bg);border-color:var(--warning-border);color:#5f2a00}
+.alert.info{background:var(--info-bg);border-color:var(--cloud-2);color:var(--ink)}
+.alert.success{background:var(--success-bg);border-color:#a6e8bb;color:#144d27}
+.advisor{display:flex;gap:14px;align-items:center}
+.avatar-lg{width:56px;height:56px;border-radius:50%;background:#0b5cab;color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0}
+.list{list-style:none;padding:0;margin:0}.list li{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px}
+.list li:last-child{border:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border-bottom:2px solid var(--border);background:#fafaf9}
+td{padding:13px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:#f8fbff}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:#fff}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.kpi span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kpi b{font-size:26px;color:var(--ink);display:block;margin-top:4px}.kpi small{color:var(--muted)}
+.cart{position:sticky;top:140px}
+.cart-line{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--border)}
+.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;color:var(--ink);padding-top:12px}
+.toggle{position:relative;width:46px;height:26px;flex-shrink:0}
+.toggle input{opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;margin:0}
+.toggle span{position:absolute;inset:0;background:#c9c9c9;border-radius:20px;transition:.2s;pointer-events:none}
+.toggle span:after{content:"";position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle input:checked+span{background:var(--blue)} .toggle input:checked+span:after{left:23px}
+.toggle input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.pref{display:flex;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.pref:last-child{border:0}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.tabs button{background:none;border:0;padding:10px 14px;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}
+dialog{border:0;border-radius:16px;padding:0;max-width:520px;width:calc(100% - 32px);box-shadow:var(--shadow-lg)}
+dialog::backdrop{background:rgba(3,45,96,.5)}
+.modal-in{padding:26px}.modal-in h3{margin:0 0 8px;color:var(--ink);font-size:20px}
+.field{margin:12px 0}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid var(--border2);border-radius:8px}
+footer{background:var(--brand-dark);border-top:5px solid var(--gold);color:#cfe6ff;margin-top:20px}
+.footer-in{max-width:1280px;margin:0 auto;padding:28px 20px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:13px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--blue-dark);color:#fff;padding:14px 18px;border-radius:10px;box-shadow:var(--shadow-lg);display:none;z-index:80;max-width:360px;pointer-events:none}
+.toast.show{display:block;pointer-events:auto}
+.note{font-size:12px;color:var(--muted);background:#fafaf9;border:1px dashed var(--border2);border-radius:8px;padding:10px 12px;margin-top:12px}
+.badge.credit{background:var(--brand);color:#fff;border-color:var(--brand)}
+.badge.noncredit{background:var(--gold-light);color:#6b4e00;border-color:var(--gold-bg)}
+.steps{display:flex;margin:18px 0 22px;overflow-x:auto;list-style:none;padding:0}
+.steps li{flex:1;min-width:130px;text-align:center;padding:12px 8px;background:#fff;border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:13px}
+.steps li:first-child{border-radius:10px 0 0 10px}.steps li:last-child{border-radius:0 10px 10px 0}
+.steps li.current{background:var(--brand);color:#fff;border-color:var(--brand)}
+.steps li.done{background:var(--gold-light);color:var(--brand)}
+.summary-box{background:var(--cream);border:1px solid #e8d48a;border-radius:10px;padding:16px}
+.ref{font-family:ui-monospace,Menlo,monospace;background:var(--brand-dark);color:var(--gold-bg);padding:10px 14px;border-radius:8px;display:inline-block;font-weight:700}
+
+/* Notifications */
+.notif-wrap{position:relative;display:inline-flex}
+.notif-panel{position:absolute;right:0;top:calc(100% + 10px);width:min(390px,calc(100vw - 24px));max-height:min(70vh,560px);overflow:auto;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);z-index:200;text-align:left}
+.notif-panel[hidden]{display:none}
+.notif-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:1}
+.notif-panel-head b{color:var(--brand);font-size:16px}
+.notif-item{display:flex;gap:12px;width:100%;text-align:left;background:#fff;border:0;border-bottom:1px solid var(--border);padding:13px 16px;cursor:pointer;font:inherit;color:var(--text)}
+.notif-item:hover{background:var(--cream)}
+.notif-item.unread{background:#eef4ff}
+.notif-item.unread:hover{background:#e2edff}
+.notif-icon{width:38px;height:38px;border-radius:50%;background:var(--gold-light);display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.notif-item.unread .notif-title{font-weight:800}
+.notif-title{color:var(--brand);font-size:14px}
+.notif-body{font-size:13px;color:var(--muted);margin-top:2px}
+.notif-meta{display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap}
+.notif-time{font-size:12px;color:var(--muted)}
+.unread-dot{width:9px;height:9px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-left:auto;margin-top:6px}
+.notif-empty{padding:20px 16px;color:var(--muted);font-size:14px}
+.msg-row{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);padding:12px 0;cursor:pointer;font:inherit;color:var(--text)}
+.msg-row:last-child{border-bottom:0}
+.msg-row.unread{background:#eef4ff;border-radius:8px;padding-left:8px;padding-right:8px}
+.home-notif-btn{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);padding:12px 0;cursor:pointer;font:inherit;color:var(--text)}
+.home-notif-btn.unread{font-weight:600}
+@media(max-width:560px){
+ .notif-panel{position:fixed;left:12px;right:12px;top:118px;width:auto;max-height:calc(100vh - 140px)}
+}
+
+.course-title-btn{background:none;border:0;padding:0;margin:0;font:inherit;font-weight:700;color:var(--brand);cursor:pointer;text-align:left}
+.course-title-btn:hover{text-decoration:underline;color:var(--blue)}
+.course-title-btn:focus-visible{outline:3px solid var(--gold-bg);outline-offset:2px}
+dialog#courseModal{max-width:640px;width:calc(100% - 32px);max-height:90vh;overflow:auto}
+.detail-rows{margin:14px 0}
+.detail-rows .cart-line{align-items:flex-start}
+.detail-rows .cart-line span:first-child{color:var(--muted);min-width:150px}
+@media(max-width:560px){.detail-rows .cart-line span:first-child{min-width:110px}}
+
+/* Student photo headers — navy fallback + gradient keeps white/gold text readable if image fails */
+.header-photo{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(110deg,var(--brand-dark) 0%,var(--brand) 55%,var(--brand-2) 100%)}
+.header-photo>img.header-photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:68% center;z-index:0}
+.header-photo>.photo-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(10,31,51,.97) 0%,rgba(10,31,51,.92) 46%,rgba(16,42,67,.55) 72%,rgba(16,42,67,.18) 100%);pointer-events:none}
+.header-photo>.photo-content{position:relative;z-index:2}
+.hero.header-photo{padding:0}
+.hero .photo-content{padding:44px 42px}
+.welcome.header-photo{padding:0}
+.welcome .photo-content{padding:26px;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+.support-hero{border-bottom:5px solid var(--gold);color:#fff;border-radius:16px;margin-bottom:16px}
+.support-hero .photo-content{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 26px;min-height:168px}
+.support-hero h2{margin:4px 0;font-size:28px;color:#fff}
+.support-hero p{color:#dbeeff;margin:0;max-width:640px}
+@media(max-width:960px){.hero .photo-content{padding:32px 24px}}
+@media(max-width:560px){
+ .header-photo>img.header-photo-img{object-position:62% center}
+ .header-photo>.photo-shade{background:linear-gradient(90deg,rgba(10,31,51,.96) 0%,rgba(10,31,51,.88) 58%,rgba(16,42,67,.55) 100%)}
+ .support-hero .photo-content{padding:22px 18px;min-height:150px}
+}
+@media(max-width:960px){.grid3,.stats{grid-template-columns:repeat(2,1fr)}.layout,.grid2{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.hero{padding:32px 24px}.hero h1{font-size:32px}.search{display:none}.cart{position:static}}
+@media(max-width:560px){.grid3,.stats,.kpi-row{grid-template-columns:1fr}.global-in{padding:0 14px}.wrap{padding:16px 14px 40px}.hero-search{flex-direction:column}.hero-search input,.hero-search select,.hero-search button{width:100%}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="global">
+  <div class="global-in">
+    <a class="logo" href="#discover" data-action="nav" data-view="discover" aria-label="SUNY Pilot Learner Portal home">
+      <span class="logo-mark" aria-hidden="true">SUNY</span>
+      <span><b style="font-family:Georgia,serif">SUNY Pilot</b><span>Learner Portal · SUNY Pilot</span></span>
+    </a>
+    <div class="search" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c5c5c" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label class="sr" for="globalSearch">Search programs, courses and help</label>
+      <input id="globalSearch" type="search" placeholder="Search programs, courses, help…" data-search-input="global">
+    </div>
+    <nav class="utils" aria-label="Utility">
+      <button class="icon-btn" aria-label="Help" data-action="nav" data-view="support"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.3-.9 1-.9 1.7"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></button>
+      <span class="notif-wrap" id="notifWrap">
+      <button class="icon-btn" id="notifBell" aria-label="Notifications, 3 unread" aria-haspopup="true" aria-expanded="false" aria-controls="notifPanel" data-action="toggle-notifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="dot" id="notifBadge" aria-hidden="true">3</span></button>
+      <div class="notif-panel" id="notifPanel" role="dialog" aria-label="Notifications" hidden>
+        <div class="notif-panel-head"><b id="notifPanelTitle" tabindex="-1">Notifications <span style="color:var(--muted);font-weight:600;font-size:13px" id="notifCountText">3 unread</span></b>
+        <span style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" data-action="mark-all-read">Mark all as read</button><button class="btn btn-neutral btn-sm" data-action="close-notifications" aria-label="Close notifications">✕</button></span></div>
+        <div id="notifList" role="list" aria-label="Notification list"></div>
+      </div>
+      </span>
+      <button class="icon-btn" aria-label="Cart and checkout" data-action="checkout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg><span class="dot" id="cartCount" aria-hidden="true">2</span></button>
+      <button class="avatar" aria-label="Account: Sample Learner (Pilot)" data-action="nav" data-view="home">SL</button>
+    </nav>
+  </div>
+  <nav class="subnav" aria-label="Community">
+    <div class="subnav-in" role="tablist" aria-label="Portal views">
+      <button role="tab" aria-selected="true" data-nav="discover" data-action="nav" data-view="discover">Discover Programs</button>
+      <button role="tab" aria-selected="false" data-nav="home" data-action="nav" data-view="home">Learner Home</button>
+      <button role="tab" aria-selected="false" data-nav="programs" data-action="nav" data-view="programs">My Programs &amp; Enrollment</button>
+      <button role="tab" aria-selected="false" data-nav="payments" data-action="nav" data-view="payments">Payments &amp; Aid</button>
+      <button role="tab" aria-selected="false" data-nav="support" data-action="nav" data-view="support">Support &amp; Advising</button>
+      <button role="tab" aria-selected="false" data-nav="checkout" data-action="nav" data-view="checkout">Checkout</button>
+    </div>
+  </nav>
+</header>
+<div class="sample-bar" role="note">✦ SUNY Pilot — pilot sample data, not official SUNY. SUNY campus names are public; learners, courses, prices and seats are fictional pilot data. · STANDARD-FIRST: Person Account/Contact, Account (Campus/Employer RTs), Product2, Order/OrderItem, Opportunity=application · Single custom LWR community on Experience Cloud (one site; 64 campuses via campus filtering + audience targeting; guest prospect + authenticated learner; LWC-only, SLDS 2) · Marketing Cloud: 1 account, BU per campus · PSS payment generic (confirm API in-org). Non-credit first; non-credit never counts toward degree credit/degree aid. NOT an LMS. · Backend Rules Engine (BRE) showcase: eligibility decisions are shown in the Lightning console prototype (backend-lightning.html#bre) — in-org, decision + reason + rule version would be stored on Order (generic; confirm in-org).</div>
+<noscript><div class="sample-bar" role="note">JavaScript is off or blocked in this viewer — all sections are shown stacked below so nothing is hidden. For tabs, cart and checkout, open community.html directly in your browser.</div></noscript>
+
+<main id="main" class="wrap" tabindex="-1">
+
+<!-- ================= 1. DISCOVER ================= -->
+<section class="view active" id="view-discover" aria-labelledby="discover-h">
+  <div class="hero header-photo">
+    <img class="header-photo-img" src="images/students-discover-hero.jpg" style="object-position:72% 42%" alt="" aria-hidden="true" loading="eager" onerror="this.remove()">
+    <span class="photo-shade" aria-hidden="true"></span>
+    <div class="photo-content">
+    <div class="eyebrow">SUNY Pilot · Pilot Sample</div>
+    <h1 id="discover-h">Your next chapter starts at SUNY Pilot.</h1>
+    <p>Explore for-credit degrees that move you toward graduation — and non-credit continuing education that moves your career, on your schedule. Compare, add to cart, and enroll in one connected SUNY Pilot community.</p>
+    <form class="hero-search" id="heroSearchForm" role="search" aria-label="Program search">
+      <label class="sr" for="q">Search programs</label><input id="q" type="search" placeholder="Try “data”, “nursing”, “business”…">
+      <label class="sr" for="heroCampus">Campus</label>
+      <select id="heroCampus" data-campus-select="1" aria-label="Campus (64 SUNY-modeled campuses)"><option value="all">All campuses (64)</option><option value="Online">Online</option></select>
+      <button class="btn btn-gold" type="submit">Search SUNY Pilot</button>
+    </form>
+    </div>
+  </div>
+
+  <div class="stats" aria-label="Community highlights">
+    <div class="stat"><b>48</b><span>Programs &amp; certificates</span></div>
+    <div class="stat"><b>64</b><span>Campuses (SUNY-modeled) + fully online</span></div>
+    <div class="stat"><b>92%</b><span>Students receiving aid*</span></div>
+    <div class="stat"><b>16k+</b><span>Learners &amp; alumni</span></div>
+  </div>
+
+  <p class="note" id="sunyNote"><strong>64-campus system model:</strong> Campus names below are from <a href="https://www.suny.edu/campuses/" target="_blank" rel="noopener">SUNY's public campus directory</a> (fetched 2026-10-18) and are used only for structure. SUNY campus names are public; learners/prices are fictional pilot data, not official SUNY — courses, prices, seats and learners are sample data. Use the campus selector to filter the catalog by campus availability.</p>
+  <div class="section-head"><div><h2>⭐ Continuing Education &amp; Workforce — start here</h2><p>SUNY Pilot's fastest path to a new skill or credential. Built for <b>career changers, working adults, employer-sponsored learners</b>, and skills-certificate seekers.</p></div><span class="badge noncredit">Non-Credit · Does NOT count toward degree credit</span></div>
+  <article class="card" style="border-top:5px solid var(--gold);margin-bottom:18px"><div class="grid3">
+      <div><h3>🚀 Start anytime or join a cohort</h3><p style="color:var(--muted);font-size:14px">Self-paced online, hybrid, and in-person trades/health labs — many courses start anytime, others run as dated cohorts with limited seats.</p></div>
+      <div><h3>🏅 Earn a skills certificate + CEUs</h3><p style="color:var(--muted);font-size:14px">Flat-fee courses with CEUs and certificates for your resume and employer. <b>They do not count toward a degree</b> and never change degree progress.</p></div>
+      <div><h3>💼 Funding is different here</h3><p style="color:var(--muted);font-size:14px"><b>Not eligible</b> for federal/state degree financial aid. Employer sponsorship or workforce funding (e.g. WIOA-style programs, sample copy) may apply and is tracked in PSS via an employer-sponsored record type — still not degree aid, and never degree credit — ask our CE team.</p></div></div>
+    <div class="filters" role="group" aria-label="Filter non-credit courses by category" style="margin-bottom:0"><span style="font-weight:700;color:var(--brand)">Browse CE by area:</span>
+      <button class="pill" data-action="discover-category" data-cat="all" aria-pressed="true">All CE areas</button>
+      <button class="pill" data-action="discover-category" data-cat="Healthcare" aria-pressed="false">Healthcare</button>
+      <button class="pill" data-action="discover-category" data-cat="IT &amp; Technology" aria-pressed="false">IT &amp; Technology</button>
+      <button class="pill" data-action="discover-category" data-cat="Business" aria-pressed="false">Business</button>
+      <button class="pill" data-action="discover-category" data-cat="Trades" aria-pressed="false">Trades</button>
+      <button class="pill" data-action="discover-category" data-cat="Language" aria-pressed="false">Language</button></div></article>
+
+  <div class="section-head"><div><h2>Featured Continuing Education catalog — enroll now</h2><p><span class="badge credit">For-Credit</span> counts toward your degree, is term-based, and may be aid-eligible. &nbsp;<span class="badge noncredit">Non-Credit</span> is continuing education / workforce / enrichment — flat fee, CEUs where noted, and <strong>does not count toward degree progress</strong>.</p></div></div>
+  <div class="filters" role="group" aria-label="Filter Discover courses by credit type">
+    <button class="pill" data-dtype="all" aria-pressed="false" data-action="discover-type" data-type-val="all">All courses</button>
+    <button class="pill" data-dtype="credit" aria-pressed="false" data-action="discover-type" data-type-val="credit">For-Credit only</button>
+    <button class="pill" data-dtype="noncredit" aria-pressed="true" data-action="discover-type" data-type-val="noncredit">Non-Credit only ⭐</button>
+    <span style="color:var(--muted);font-size:13px" id="discoverCount"></span>
+  </div>
+  <div class="grid3" id="discoverCourseGrid"></div>
+
+  <div class="section-head"><div><h2>Also at SUNY Pilot: degree programs (for-credit)</h2><p>Commerce-style catalog powered by Commerce Cloud · Pricing shown is sample 2026–27 tuition.</p></div>
+  <button class="btn btn-outline" data-action="open-modal" data-modal="requestModal">Request information</button></div>
+
+  <div class="filters" role="group" aria-label="Filter by campus" style="align-items:center">
+    <button class="pill" data-campus="all" aria-pressed="true" data-action="campus" data-campus-val="all">All campuses (64)</button>
+    <button class="pill" data-campus="Online" aria-pressed="false" data-action="campus" data-campus-val="Online">Online</button>
+    <label style="font-weight:700;color:var(--brand)">Campus <select id="programCampusSelect" data-campus-select="1" aria-label="Select one of 64 campuses" style="padding:9px 12px;border:1px solid var(--border2);border-radius:20px;max-width:340px"><option value="all">All campuses (64)</option><option value="Online">Online</option></select></label>
+    <span id="campusCountNote" style="color:var(--muted);font-size:13px">64 campuses + Online</span>
+  </div>
+
+  <div class="grid3" id="programGrid"></div>
+  <p id="noResults" style="display:none;color:var(--muted);padding:20px 0">No programs match that search. Try a different keyword or campus.</p>
+
+  <div class="section-head"><div><h2>How it works</h2><p>One connected journey — not separate portals.</p></div></div>
+  <div class="grid3">
+    <article class="card"><span class="badge">1 · Discover</span><h3 style="margin-top:10px">Explore &amp; request info</h3><p>Browse the catalog, save favorites, and tell us what you're interested in. We'll follow up through your preferred campus.</p></article>
+    <article class="card"><span class="badge">2 · Enroll</span><h3 style="margin-top:10px">Enroll like checkout</h3><p>Add courses to your cart, review tuition and fees, and confirm enrollment in a familiar Commerce Cloud checkout flow.</p></article>
+    <article class="card"><span class="badge">3 · Fund &amp; learn</span><h3 style="margin-top:10px">Aid, payments &amp; support</h3><p>Track state funding and financial aid, manage payment plans, and meet your advisor — all inside this community.</p></article>
+  </div>
+  <p class="note">Staff hint (not a learner screen): Leads route to Enrollment Specialists by campus business unit; program interest syncs to Marketing Cloud for nurture journeys.</p>
+</section>
+
+<!-- ================= 2. LEARNER HOME ================= -->
+<section class="view" id="view-home" aria-labelledby="home-h">
+  <div class="welcome header-photo"><img class="header-photo-img" src="images/students-learner-home.jpg" style="object-position:66% 64%" alt="" aria-hidden="true" loading="lazy" onerror="this.remove()"><span class="photo-shade" aria-hidden="true"></span><div class="photo-content"><div class="eyebrow" style="color:var(--gold-bg)">Learner · Student</div><h2 id="home-h">Welcome back, Sample Learner (Pilot) 👋</h2><p>B.S. Computer Science · Online + University at Albany (sample home campus) · Expected graduation: May 2027 · Student ID 884-1027 (sample)</p></div></div>
+  <div style="height:16px"></div>
+  <div class="alert warn" role="alert"><span aria-hidden="true">⚠️</span><div><strong>Advising hold — action needed before Spring enrollment.</strong><br>Meet with your Education Advisor to review your degree plan. <a href="#" data-action="nav" data-view="support">Book an appointment →</a></div></div>
+  <div class="alert info"><span aria-hidden="true">ℹ️</span><div><strong>Spring 2027 enrollment opens Nov 3.</strong> Your cart has 2 courses saved. Aid disbursement for Fall is complete — see Payments &amp; Aid.</div></div>
+
+  <div class="layout">
+    <div>
+      <div class="grid2">
+        <article class="card"><h3>Degree progress — for-credit only</h3><div class="ring-wrap"><div class="ring" role="img" aria-label="Degree progress 68 percent"><div class="ring-in"><div><b>68%</b><span>complete</span></div></div></div><div><strong>82 of 120 credits</strong><p style="color:var(--muted);margin:4px 0">38 credits remaining<br>GPA 3.62 · Good standing</p><span class="badge green">On track</span></div></div>
+          <div style="margin-top:16px"><div class="meta" style="justify-content:space-between"><span>Core requirements</span><b>24 / 30</b></div><div class="progress"><i style="width:80%"></i></div>
+          <div class="meta" style="justify-content:space-between"><span>Major — Computer Science</span><b>36 / 48</b></div><div class="progress"><i style="width:75%"></i></div>
+          <div class="meta" style="justify-content:space-between"><span>Electives</span><b>22 / 42</b></div><div class="progress green"><i style="width:52%"></i></div></div>
+        </article>
+        <article class="card"><h3>Continuing Education — non-credit</h3><p><span class="badge noncredit">Does not count toward degree</span></p><div id="homeCeSummary" style="margin:10px 0;font-size:14px;color:var(--muted)">CEUs earned: 0.6 · Certificates: 1 earned</div><div id="homeContEd"><ul class="list"><li><span>Excel for Professionals — 0.6 CEU · Online, self-paced</span><span class="badge grey">Completed Sep 2026</span></li></ul></div><div class="card-actions"><button class="btn btn-gold btn-sm" data-action="browse-noncredit">Browse non-credit courses</button></div></article>
+        <article class="card"><h3>Enrollment summary — Fall 2026</h3><ul class="list">
+          <li><span>Enrolled credits</span><b>12 credits · 4 courses</b></li>
+          <li><span>Term ends</span><b>Dec 12, 2026</b></li>
+          <li><span>Next term</span><b>Spring 2027 · Jan 12</b></li>
+          <li><span>Balance due</span><b style="color:var(--warning)">$412.00 · Nov 1</b></li></ul>
+          <div class="card-actions"><button class="btn btn-brand btn-sm" data-action="nav" data-view="programs">View my programs</button><button class="btn btn-neutral btn-sm" data-action="nav" data-view="payments">Pay balance</button></div>
+        </article>
+      </div>
+      <div style="height:16px"></div>
+      <article class="card"><h3>Up next</h3><ul class="list">
+        <li><span>📅 Advisor meeting — Degree plan review</span><b>Oct 22 · 2:00 PM</b></li>
+        <li><span>💳 Payment plan installment 3 of 4</span><b>Nov 1 · $412</b></li>
+        <li><span>📝 Spring course cart closes</span><b>Nov 10</b></li></ul></article>
+    </div>
+    <aside>
+      <article class="card"><h3>Financial aid at a glance</h3><p class="price">$8,740 <small>awarded 2026–27</small></p><p style="font-size:13px;color:var(--muted)">Aid applies to for-credit tuition only. Non-credit flat fees are not aid-eligible and never affect degree progress.</p><ul class="list"><li><span>State Grant (PSS)</span><span class="badge green">Disbursed</span></li><li><span>Federal Pell Grant</span><span class="badge green">Disbursed</span></li><li><span>Institutional Scholarship</span><span class="badge amber">Pending review</span></li></ul><button class="btn btn-outline btn-sm" data-action="nav" data-view="payments">See aid details</button></article>
+      <div style="height:16px"></div>
+      <article class="card"><h3>Your advisor</h3><div class="advisor"><div class="avatar-lg" aria-hidden="true">MR</div><div><strong>Maya Rivera</strong><br><span style="color:var(--muted);font-size:13px">Education Advisor · University at Albany (sample)</span></div></div><p style="font-size:14px">“Let's clear your advising hold and lock in Spring courses that keep you on track to graduate in May.”</p><div class="card-actions"><button class="btn btn-brand btn-sm" data-action="nav" data-view="support">Message advisor</button><button class="btn btn-neutral btn-sm" data-action="nav" data-view="support">Book appointment</button></div></article>
+      <div style="height:16px"></div>
+      <article class="card"><h3>Notifications <span class="badge" id="homeNotifBadge">3 unread</span></h3><div id="homeNotifList"><ul class="list"><li><span>🎓 Aid disbursed to your account</span><small>Oct 14</small></li><li><span>🗓️ Advisor replied to your case</span><small>Oct 12</small></li><li><span>💳 Payment plan installment due Nov 1</span><small>Oct 11</small></li></ul></div><div class="card-actions"><button class="btn btn-outline btn-sm" data-action="mark-all-read">Mark all as read</button></div></article>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= 3. MY PROGRAMS ================= -->
+<section class="view" id="view-programs" aria-labelledby="prog-h">
+  <div class="section-head"><div><h2 id="prog-h">My Programs &amp; Enrollment</h2><p>Education Cloud enrollment with a Commerce Cloud cart &amp; checkout preview. This community is not an LMS — course delivery happens in your classes, progress is tracked here.</p></div>
+  <label>Term <select id="termSel" data-term-select="1" style="padding:10px;border-radius:8px;border:1px solid var(--border2)"><option>Fall 2026</option><option>Spring 2027</option><option>Summer 2027</option></select></label></div>
+
+  <div class="kpi-row"><div class="kpi"><span>Active program</span><b style="font-size:19px">B.S. Computer Science</b><small>Online + University at Albany (sample home campus)</small></div><div class="kpi"><span>Enrolled credits</span><b>12</b><small>Fall 2026 · 4 courses</small></div><div class="kpi"><span>Credits completed</span><b>82 / 120</b><small>68% to degree</small></div><div class="kpi"><span>Cart</span><b id="kpiCart">2 courses</b><small>Spring 2027 draft</small></div></div>
+
+  <h3 style="color:var(--ink)">Enrolled courses</h3>
+  <div class="table-wrap"><table aria-label="Enrolled courses"><thead><tr><th>Course</th><th>Title</th><th>Format / Campus</th><th>Credits</th><th>Term</th><th>Status</th></tr></thead><tbody id="enrolledCreditBody"><!-- rendered by JS --></tbody></table></div>
+  <p style="font-size:12px;color:var(--muted)">*Sample status for prototype illustration.</p>
+  <h3 style="color:var(--brand);margin-top:24px">Continuing Education — non-credit <span class="badge noncredit">Does NOT count toward degree</span></h3>
+  <div class="grid3" style="margin-bottom:12px">
+    <div class="stat"><b id="ceEarned">0.6</b><span>CEUs earned (completed)</span></div>
+    <div class="stat"><b id="ceCerts">1 earned · 0 in progress</b><span>Certificates</span></div>
+    <div class="stat"><b id="ceUpcoming">—</b><span>Upcoming / next CE sessions</span></div>
+  </div>
+  <div class="table-wrap"><table aria-label="Enrolled non-credit courses"><thead><tr><th>Course</th><th>Title</th><th>Format</th><th>CEU</th><th>Dates</th><th>Status</th></tr></thead><tbody id="enrolledNonCreditBody"></tbody></table></div>
+
+  <div class="layout" style="margin-top:20px">
+    <div><h3 style="color:var(--brand)">Add courses — catalog (Spring 2027 &amp; start-anytime)</h3>
+      <div class="filters" role="group" aria-label="Filter enrollment catalog by credit type">
+        <button class="pill" data-ptype="all" aria-pressed="true" data-action="program-type" data-type-val="all">All courses</button>
+        <button class="pill" data-ptype="credit" aria-pressed="false" data-action="program-type" data-type-val="credit">For-Credit only</button>
+        <button class="pill" data-ptype="noncredit" aria-pressed="false" data-action="program-type" data-type-val="noncredit">Non-Credit only ⭐</button>
+      </div><div class="grid2" id="courseGrid"></div></div>
+    <aside class="card cart" aria-label="Enrollment cart"><h3>🛒 Enrollment cart <span class="badge">Commerce</span></h3><div id="cartLines"></div><div class="total"><span>Total tuition &amp; fees</span><span id="cartTotal">$0</span></div><p style="font-size:13px;color:var(--muted)">Estimated aid applies only to for-credit tuition. Non-credit flat fees are due in full. No payment is taken in this prototype — checkout is a simulation.</p><div id="cartTotals"></div><button class="btn btn-brand" style="width:100%;margin-top:12px" data-action="checkout">Proceed to checkout →</button><button class="btn btn-neutral" style="width:100%;margin-top:8px" data-action="toast" data-toast="Cart saved. You can return before Nov 10.">Save cart for later</button><p class="note">Staff hint: Registrar reviews enrollment exceptions; Enrollment Specialists assist with cart/checkout questions.</p></aside>
+  </div>
+</section>
+
+
+<!-- CHECKOUT -->
+<section class="view" id="view-checkout" aria-labelledby="co-h">
+  <div class="section-head"><div><h2 id="co-h">Checkout — SUNY Pilot Enrollment</h2><p>Commerce Cloud checkout simulation. Sample data only — nothing is submitted, charged, or transmitted.</p></div><button class="btn btn-neutral" data-action="nav" data-view="programs">&larr; Back to catalog</button></div>
+  <ol class="steps" id="stepsBar" aria-label="Checkout progress">
+    <li data-step="1" class="current">1 · Cart review</li><li data-step="2">2 · Learner details</li><li data-step="3">3 · Payment method</li><li data-step="4">4 · Review</li><li data-step="5">5 · Confirmation</li>
+  </ol>
+  <div class="checkout-step active" id="step1">
+    <article class="card"><h3>Review your cart</h3><div id="checkoutCart"></div><div id="checkoutTotals1"></div>
+    <div class="card-actions"><button class="btn btn-brand" data-action="step" data-step-val="2">Continue to learner details &rarr;</button><button class="btn btn-neutral" data-action="nav" data-view="programs">Add more courses</button></div></article>
+  </div>
+  <div class="checkout-step" id="step2">
+    <article class="card"><h3>Learner details</h3>
+    <form id="detailsForm">
+      <div class="grid2">
+        <div class="field"><label for="co-name">Full name</label><input id="co-name" value="Sample Learner (Pilot)" required></div>
+        <div class="field"><label for="co-email">Email</label><input id="co-email" type="email" value="sample.learner@example.edu" required></div>
+        <div class="field"><label for="co-campus">Home campus (Marketing Cloud business unit)</label><select id="co-campus"><option>Online</option><option selected>University at Albany</option></select></div>
+        <div class="field"><label for="co-type">Learner type</label><select id="co-type"><option>Current Learner / Student</option><option>Prospect — new to SUNY Pilot</option><option>Alumni — continuing education</option><option>Returning Learner</option></select></div>
+      </div>
+      <div class="field"><label><input type="checkbox" id="attestBox" aria-required="true" style="width:auto"> I understand for-credit courses count toward degree progress when completed, and non-credit courses do not count toward my degree.</label></div>
+      <div class="card-actions"><button class="btn btn-neutral" type="button" data-action="step" data-step-val="1">&larr; Back</button><button class="btn btn-brand" type="submit">Continue to payment &rarr;</button></div>
+    </form></article>
+  </div>
+  <div class="checkout-step" id="step3">
+    <article class="card"><h3>Payment method <span class="badge amber">Placeholder only</span></h3>
+      <p style="color:var(--muted)">Prototype only — do not enter real card details. Prefilled sample placeholders are used.</p>
+      <form id="paymentForm">
+        <div class="field"><label><input type="radio" name="pay" value="card" checked style="width:auto" data-pay-radio="1"> Pay in full — sample card</label></div>
+        <div class="grid2"><div class="field"><label for="cardnum">Card number (sample)</label><input id="cardnum" value="•••• •••• •••• 4412"></div>
+        <div class="field"><label for="exp">Expiry / CVC (sample)</label><input id="exp" value="12/28 · •••"></div></div>
+        <p style="font-size:12px;color:var(--muted)">No payment processor is connected. Nothing will be charged.</p>
+        <div class="field"><label><input type="radio" name="pay" value="plan" style="width:auto" data-pay-radio="1"> Payment plan — split remaining balance (placeholder)</label></div>
+        <div class="field"><label><input type="radio" name="pay" value="aid" style="width:auto" data-pay-radio="1"> Use estimated aid for for-credit tuition + pay the rest (placeholder)</label></div>
+        <div id="planNote" class="summary-box" style="display:none">Selected: remaining balance after estimated for-credit aid will be split / handled after enrollment on Payments &amp; Aid. $0 is actually charged in this simulation.</div>
+        <div class="card-actions"><button class="btn btn-neutral" type="button" data-action="step" data-step-val="2">&larr; Back</button><button class="btn btn-brand" type="submit">Review order &rarr;</button></div>
+      </form></article>
+  </div>
+  <div class="checkout-step" id="step4">
+    <article class="card"><h3>Review &amp; confirm enrollment</h3><div id="reviewBox"></div>
+    <div class="card-actions"><button class="btn btn-neutral" data-action="step" data-step-val="3">&larr; Back</button><button class="btn btn-gold" data-action="complete-checkout">Confirm enrollment (simulation) ✓</button></div>
+    <p class="note">Confirming generates sample order/enrollment references, moves cart courses to Registered status in My Programs, and clears your cart. No real enrollment or payment occurs.</p></article>
+  </div>
+  <div class="checkout-step" id="step5">
+    <div class="alert success" role="status"><span aria-hidden="true">✅</span><div><strong>You're enrolled — simulation complete!</strong><br>Keep your references below. These courses now show as Registered in My Programs.</div></div>
+    <article class="card"><h3>Confirmation — SUNY Pilot</h3><div id="confirmationBox"></div>
+    <div class="card-actions"><button class="btn btn-brand" data-action="nav" data-view="programs">Go to My Programs &rarr;</button><button class="btn btn-neutral" data-action="nav" data-view="home">Go to Learner Home</button><button class="btn btn-outline" data-action="nav" data-view="payments">View Payments &amp; Aid</button></div></article>
+  </div>
+</section>
+
+<!-- ================= 4. PAYMENTS & AID ================= -->
+<section class="view" id="view-payments" aria-labelledby="pay-h">
+  <div class="section-head"><div><h2 id="pay-h">Payments &amp; Aid</h2><p>Commerce Cloud payments + Public Sector Solutions state funding &amp; financial aid. Aid applies to <b>for-credit</b> tuition only; non-credit courses are flat-fee and aid-ineligible.</p></div><button class="btn btn-brand" data-action="toast" data-toast="Preview only: secure payment would open in Commerce checkout.">Make a payment</button></div>
+  <div class="kpi-row">
+    <div class="kpi"><span>Balance due</span><b>$412.00</b><small>Due Nov 1, 2026</small></div>
+    <div class="kpi"><span>Fall charges</span><b>$6,284</b><small>Tuition &amp; fees</small></div>
+    <div class="kpi"><span>Aid applied</span><b style="color:var(--success)">−$5,872</b><small>Grants &amp; scholarships</small></div>
+    <div class="kpi"><span>Payment plan</span><b style="font-size:20px">3 of 4 paid</b><small>Auto-pay · Visa ••4412</small></div>
+  </div>
+  <div class="grid2">
+    <article class="card"><h3>Tuition &amp; fees — Fall 2026</h3><div class="table-wrap" style="border:0"><table aria-label="Charges"><tbody>
+      <tr><td>Tuition (12 credits × $485)</td><td style="text-align:right"><b>$5,820</b></td></tr>
+      <tr><td>Technology fee</td><td style="text-align:right"><b>$184</b></td></tr>
+      <tr><td>Student services fee</td><td style="text-align:right"><b>$280</b></td></tr>
+      <tr><td>Financial aid applied</td><td style="text-align:right;color:var(--success)"><b>−$5,872</b></td></tr>
+      <tr><td style="font-weight:800;color:var(--ink)">Balance</td><td style="text-align:right;font-weight:800">$412.00</td></tr></tbody></table></div>
+      <h3 style="margin-top:20px">Commerce checkout summary (preview)</h3><ul class="list"><li><span>Subtotal</span><b>$6,284</b></li><li><span>Aid &amp; grants</span><b>−$5,872</b></li><li><span>Payment plan remaining</span><b>$412</b></li></ul><button class="btn btn-outline btn-sm" data-action="toast" data-toast="Preview only: Commerce Cloud checkout summary.">Review checkout</button></article>
+    <article class="card"><h3>Payment plan</h3><ul class="list">
+      <li><span>✓ Installment 1 — Aug 1</span><span class="badge green">Paid</span></li>
+      <li><span>✓ Installment 2 — Sep 1</span><span class="badge green">Paid</span></li>
+      <li><span>✓ Installment 3 — Oct 1</span><span class="badge green">Paid</span></li>
+      <li><span>Installment 4 — Nov 1 · $412</span><span class="badge amber">Upcoming</span></li></ul>
+      <div class="progress green" aria-label="Payment plan 75 percent paid"><i style="width:75%"></i></div><p style="font-size:13px;color:var(--muted)">75% paid · Auto-pay on · No interest plan (sample terms)</p></article>
+  </div>
+  <div style="height:16px"></div>
+  <article class="card"><h3>Financial aid &amp; state funding awards — 2026–27 <span class="badge">Public Sector Solutions</span></h3>
+  <div class="table-wrap" style="margin-top:12px"><table aria-label="Aid awards"><thead><tr><th>Award</th><th>Source</th><th>Amount</th><th>Disbursement</th><th>Status</th></tr></thead><tbody>
+  <tr><td><b>State Opportunity Grant</b></td><td>State funding (PSS)</td><td>$3,200</td><td>Fall $1,600 · Spring $1,600</td><td><span class="badge green">Fall disbursed</span></td></tr>
+  <tr><td><b>Federal Pell Grant</b></td><td>Federal aid</td><td>$3,940</td><td>Fall $1,970 · Spring $1,970</td><td><span class="badge green">Fall disbursed</span></td></tr>
+  <tr><td><b>Institutional Merit Scholarship</b></td><td>University</td><td>$1,600</td><td>Fall $800 · Spring $800</td><td><span class="badge amber">Pending review</span></td></tr>
+  <tr><td><b>Work-Study (optional)</b></td><td>Federal aid</td><td>Up to $1,200</td><td>By placement</td><td><span class="badge grey">Not accepted</span></td></tr>
+  </tbody></table></div>
+  <p class="note">Aid eligibility and state funding are determined in Public Sector Solutions; this community shows the learner their awards and disbursement status. Sample data only — not a financial offer.</p></article>
+</section>
+
+<!-- ================= 5. SUPPORT ================= -->
+<section class="view" id="view-support" aria-labelledby="sup-h">
+  <div class="support-hero header-photo"><img class="header-photo-img" src="images/students-support-advising.jpg" style="object-position:74% 32%" alt="" aria-hidden="true" loading="lazy" onerror="this.remove()"><span class="photo-shade" aria-hidden="true"></span><div class="photo-content"><div><div class="eyebrow">SUNY Pilot · Support</div><h2 id="sup-h">Support &amp; Advising</h2><p>Advising, appointments, cases, messages — and your communication preferences.</p></div><button class="btn btn-gold" data-action="open-modal" data-modal="caseModal">Create a case</button></div></div>
+  <div class="layout">
+    <div>
+      <article class="card"><h3>Your advising team</h3><div class="advisor"><div class="avatar-lg" aria-hidden="true">MR</div><div><strong>Maya Rivera — Education Advisor</strong><br><span style="color:var(--muted);font-size:13px">University at Albany (sample) · Advises B.S. Computer Science · Replies within 1 business day</span></div></div>
+      <div class="card-actions" style="margin-top:14px"><button class="btn btn-brand btn-sm" data-action="toast" data-toast="Message composer preview — no message sent in prototype.">Send message</button><button class="btn btn-outline btn-sm" data-action="toast" data-toast="Appointment booking preview — Oct 22, 2:00 PM held.">Book appointment</button></div>
+      <ul class="list" style="margin-top:10px"><li><span>📅 Degree plan review</span><b>Oct 22 · 2:00 PM · Video</b></li><li><span>📅 Spring enrollment check-in</span><b>Nov 5 · 10:30 AM · Video</b></li></ul></article>
+      <div style="height:16px"></div>
+      <article class="card"><h3>My cases</h3><div class="table-wrap" style="margin-top:10px"><table aria-label="Support cases"><thead><tr><th>Case</th><th>Subject</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+      <tr><td>#004821</td><td>Advising hold question</td><td><span class="badge amber">Working</span></td><td>Oct 15</td></tr>
+      <tr><td>#004790</td><td>State grant disbursement timing</td><td><span class="badge green">Resolved</span></td><td>Oct 12</td></tr>
+      <tr><td>#004655</td><td>Course substitution request</td><td><span class="badge green">Resolved</span></td><td>Sep 28</td></tr></tbody></table></div></article>
+      <div style="height:16px"></div>
+      <article class="card"><h3>Messages &amp; notifications <span class="badge" id="supportNotifBadge">3 unread</span></h3><div id="supportNotifList"><ul class="list"><li><span><b>Maya Rivera:</b> “I’ve reviewed your degree plan — let’s meet Oct 22…”</span><small>Oct 15</small></li><li><span><b>Financial Aid:</b> “Your State Grant has disbursed.”</span><small>Oct 14</small></li><li><span><b>Registrar:</b> “Spring enrollment opens Nov 3.”</span><small>Oct 9</small></li></ul></div><p style="font-size:12px;color:var(--muted)">Select a message to mark it read and open the related area.</p></article>
+    </div>
+    <aside>
+      <article class="card"><h3>Communication preferences</h3><p style="font-size:13px;color:var(--muted)">Marketing Cloud — one account, a business unit per campus. Choose what each campus sends you.</p>
+      <h4 style="margin:16px 0 4px;color:var(--ink)">Online Campus <span class="badge">Business Unit</span></h4>
+      <div class="pref"><div><b>Program &amp; enrollment updates</b><br><small style="color:var(--muted)">Deadlines, cart reminders</small></div><label class="toggle"><span class="sr">Online program updates</span><input type="checkbox" checked data-pref-toggle="1"><span></span></label></div>
+      <div class="pref"><div><b>Continuing-ed new courses</b><br><small style="color:var(--muted)">Non-credit launches, CEU courses</small></div><label class="toggle"><span class="sr">Continuing ed updates</span><input type="checkbox" checked data-pref-toggle="1"><span></span></label></div>
+      <div class="pref"><div><b>Events &amp; webinars</b><br><small style="color:var(--muted)">Virtual info sessions</small></div><label class="toggle"><span class="sr">Online events</span><input type="checkbox" checked data-pref-toggle="1"><span></span></label></div>
+      <h4 style="margin:16px 0 4px;color:var(--ink)">University at Albany <span class="badge">Business Unit (sample, 1 of 64)</span></h4>
+      <div class="pref"><div><b>Campus news &amp; events</b><br><small style="color:var(--muted)">In-person events, closures</small></div><label class="toggle"><span class="sr">North campus news</span><input type="checkbox" data-pref-toggle="1"><span></span></label></div>
+      <div class="pref"><div><b>Financial aid reminders</b><br><small style="color:var(--muted)">FAFSA, state grant deadlines</small></div><label class="toggle"><span class="sr">Aid reminders</span><input type="checkbox" checked data-pref-toggle="1"><span></span></label></div>
+      <div class="pref"><div><b>SMS text alerts</b><br><small style="color:var(--muted)">Urgent deadlines only</small></div><label class="toggle"><span class="sr">SMS alerts</span><input type="checkbox" data-pref-toggle="1"><span></span></label></div>
+      <button class="btn btn-brand btn-sm" style="margin-top:14px" data-action="toast" data-toast="Preferences saved (prototype — nothing sent).">Save preferences</button>
+      </article>
+      <div style="height:16px"></div>
+      <article class="card"><h3>Quick help</h3><ul class="list"><li><a href="#" data-action="help-preview">How enrollment checkout works</a><span>→</span></li><li><a href="#" data-action="help-preview">Understanding your aid &amp; state funding</a><span>→</span></li><li><a href="#" data-action="help-preview">Payment plans &amp; refunds</a><span>→</span></li></ul><p class="note">Alumni? This same community carries your alumni profile, transcripts requests and giving — sign in with your learner account.</p></article>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer><div class="footer-in"><div><b style="color:#fff;font-family:Georgia,serif">SUNY Pilot</b> <span style="color:var(--gold-bg)">SUNY Pilot</span><br>Learner Portal — Experience Cloud · Education Cloud · Commerce Cloud · Marketing Cloud · Public Sector Solutions<br><span style="color:#8fa6bd">Pilot sample address only · Not an official SUNY site</span></div><div>Sample data only · Not an official university site · Campus structure modeled on SUNY's 64-campus public directory (suny.edu/campuses, fetched 2026-10-18); all courses, prices, and learners are fictional sample data. SUNY Pilot is not SUNY.<br>Accessibility: semantic HTML, keyboard focus, aria labels</div></div></footer>
+
+<dialog id="requestModal" aria-labelledby="req-h"><div class="modal-in"><h3 id="req-h">Request information</h3><p style="color:var(--muted)">Tell us what you're exploring and your campus Enrollment Specialist will follow up. (Prototype — nothing is submitted.)</p>
+<form id="requestForm">
+<div class="field"><label for="ri-name">Full name</label><input id="ri-name" required autocomplete="name" placeholder="Jordan Lee"></div>
+<div class="field"><label for="ri-email">Email</label><input id="ri-email" type="email" required placeholder="you@example.edu"></div>
+<div class="field"><label for="ri-prog">Program of interest</label><select id="ri-prog"><option>B.S. Computer Science</option><option>M.B.A.</option><option>M.S. Data Analytics</option><option>B.S.N. Nursing</option><option>Cybersecurity Certificate</option></select></div>
+<div class="field"><label for="ri-campus">Preferred campus (Marketing Cloud business unit)</label><select id="ri-campus" data-campus-select="1"><option value="all">All campuses (64)</option><option>Online</option><option selected>University at Albany</option></select></div>
+<div class="card-actions"><button class="btn btn-brand" type="submit">Send request (preview)</button><button class="btn btn-neutral" type="button" data-action="close-modal" data-modal="requestModal">Cancel</button></div></form></div></dialog>
+
+<dialog id="caseModal" aria-labelledby="case-h"><div class="modal-in"><h3 id="case-h">Create a case</h3><p style="color:var(--muted)">Support preview — no case is created in this prototype.</p>
+<form id="caseForm">
+<div class="field"><label for="c-sub">Subject</label><input id="c-sub" required placeholder="How can we help?"></div>
+<div class="field"><label for="c-cat">Category</label><select id="c-cat"><option>Advising</option><option>Financial Aid / State Funding</option><option>Payments &amp; Billing</option><option>Enrollment / Registrar</option><option>Technical Help</option></select></div>
+<div class="field"><label for="c-desc">Details</label><textarea id="c-desc" rows="4"></textarea></div>
+<div class="card-actions"><button class="btn btn-brand" type="submit">Submit (preview)</button><button class="btn btn-neutral" type="button" data-action="close-modal" data-modal="caseModal">Cancel</button></div></form></div></dialog>
+
+
+<dialog id="courseModal" aria-labelledby="courseModalTitle"><div class="modal-in">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+    <h3 id="courseModalTitle" tabindex="-1">Course details</h3>
+    <button class="btn btn-neutral btn-sm" data-action="close-modal" data-modal="courseModal" aria-label="Close course details">✕ Close</button>
+  </div>
+  <div id="courseDetailContent"></div>
+</div></dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+try{document.documentElement.classList.add('js-enabled')}catch(e){}
+function safeGet(k){try{return window.localStorage?window.localStorage.getItem(k):null}catch(e){return null}}
+function safeSet(k,v){try{if(window.localStorage)window.localStorage.setItem(k,v)}catch(e){}}
+function safeInit(name,fn){try{fn()}catch(e){try{console.warn('[prototype] widget failed:',name,e)}catch(_){}}}
+const SUNY_CAMPUSES=[{"code": "suny-adirondack", "name": "SUNY Adirondack", "type": "Community College", "city": "Queensbury"}, {"code": "university-at-albany", "name": "University at Albany", "type": "University Center / Doctoral Degree Granting Institution", "city": "Albany"}, {"code": "alfred-state-college", "name": "Alfred State College", "type": "Technology College", "city": "Alfred"}, {"code": "nys-college-of-ceramics-at-alfred-university", "name": "NYS College of Ceramics at Alfred University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Alfred"}, {"code": "binghamton-university", "name": "Binghamton University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Binghamton area"}, {"code": "suny-brockport", "name": "SUNY Brockport", "type": "University College", "city": "Brockport"}, {"code": "suny-broome-community-college", "name": "SUNY Broome Community College", "type": "Community College", "city": "Binghamton"}, {"code": "university-at-buffalo", "name": "University at Buffalo", "type": "University Center / Doctoral Degree Granting Institution", "city": "Buffalo"}, {"code": "buffalo-state-university", "name": "Buffalo State University", "type": "University College", "city": "Buffalo"}, {"code": "suny-canton", "name": "SUNY Canton", "type": "Technology College", "city": "Canton"}, {"code": "cayuga-community-college", "name": "Cayuga Community College", "type": "Community College", "city": "Auburn"}, {"code": "clinton-community-college", "name": "Clinton Community College", "type": "Community College", "city": "Plattsburgh"}, {"code": "suny-cobleskill-ag-and-tech", "name": "SUNY Cobleskill Ag & Tech", "type": "Technology College", "city": "Cobleskill"}, {"code": "columbia-greene-community-college", "name": "Columbia-Greene Community College", "type": "Community College", "city": "Hudson"}, {"code": "nys-college-of-agriculture-and-life-sciences-at-cornell-university", "name": "NYS College of Agriculture & Life Sciences at Cornell University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Ithaca (Cornell University)"}, {"code": "nys-college-of-human-ecology-at-cornell-university", "name": "NYS College of Human Ecology at Cornell University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Ithaca (Cornell University)"}, {"code": "nys-school-of-industrial-and-labor-relations-at-cornell-university", "name": "NYS School of Industrial & Labor Relations at Cornell University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Ithaca (Cornell University)"}, {"code": "nys-college-of-veterinary-medicine-at-cornell-university", "name": "NYS College of Veterinary Medicine at Cornell University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Ithaca (Cornell University)"}, {"code": "corning-community-college", "name": "Corning Community College", "type": "Community College", "city": "Corning"}, {"code": "suny-cortland", "name": "SUNY Cortland", "type": "University College", "city": "Cortland"}, {"code": "suny-delhi", "name": "SUNY Delhi", "type": "Technology College", "city": "Delhi"}, {"code": "suny-downstate-health-sciences-university", "name": "SUNY Downstate Health Sciences University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Brooklyn, New York City"}, {"code": "dutchess-community-college", "name": "Dutchess Community College", "type": "Community College", "city": "Poughkeepsie"}, {"code": "suny-empire-state-university", "name": "SUNY Empire State University", "type": "University College", "city": "Primarily online / statewide"}, {"code": "suny-college-of-environmental-science-and-forestry", "name": "SUNY College of Environmental Science and Forestry (ESF)", "type": "University Center / Doctoral Degree Granting Institution", "city": "Syracuse"}, {"code": "erie-community-college", "name": "Erie Community College", "type": "Community College", "city": "Williamsville, Buffalo and Orchard Park"}, {"code": "farmingdale-state-college", "name": "Farmingdale State College", "type": "Technology College", "city": "Farmingdale"}, {"code": "fashion-institute-of-technology", "name": "Fashion Institute of Technology (FIT)", "type": "Community College", "city": "New York City"}, {"code": "finger-lakes-community-college", "name": "Finger Lakes Community College", "type": "Community College", "city": "Canandaigua"}, {"code": "suny-fredonia", "name": "SUNY Fredonia", "type": "University College", "city": "Fredonia"}, {"code": "fulton-montgomery-community-college", "name": "Fulton-Montgomery Community College", "type": "Community College", "city": "Johnstown"}, {"code": "genesee-community-college", "name": "Genesee Community College", "type": "Community College", "city": "Batavia"}, {"code": "suny-geneseo", "name": "SUNY Geneseo", "type": "University College", "city": "Geneseo"}, {"code": "herkimer-county-community-college", "name": "Herkimer County Community College", "type": "Community College", "city": "Herkimer"}, {"code": "hudson-valley-community-college", "name": "Hudson Valley Community College", "type": "Community College", "city": "Troy"}, {"code": "jamestown-community-college", "name": "Jamestown Community College", "type": "Community College", "city": "Jamestown"}, {"code": "jefferson-community-college", "name": "Jefferson Community College", "type": "Community College", "city": "Watertown"}, {"code": "maritime-college", "name": "Maritime College", "type": "Technology College", "city": "Bronx, New York City (Throggs Neck)"}, {"code": "mohawk-valley-community-college", "name": "Mohawk Valley Community College", "type": "Community College", "city": "Utica"}, {"code": "monroe-community-college", "name": "Monroe Community College", "type": "Community College", "city": "Rochester"}, {"code": "suny-morrisville", "name": "SUNY Morrisville", "type": "Technology College", "city": "Morrisville"}, {"code": "nassau-community-college", "name": "Nassau Community College", "type": "Community College", "city": "Garden City"}, {"code": "suny-new-paltz", "name": "SUNY New Paltz", "type": "University College", "city": "New Paltz"}, {"code": "suny-niagara-community-college", "name": "SUNY Niagara Community College", "type": "Community College", "city": "Sanborn"}, {"code": "north-country-community-college", "name": "North Country Community College", "type": "Community College", "city": "Saranac Lake, Malone and Ticonderoga"}, {"code": "suny-old-westbury", "name": "SUNY Old Westbury", "type": "University College", "city": "Old Westbury"}, {"code": "suny-oneonta", "name": "SUNY Oneonta", "type": "University College", "city": "Oneonta"}, {"code": "onondaga-community-college", "name": "Onondaga Community College", "type": "Community College", "city": "Syracuse"}, {"code": "college-of-optometry", "name": "College of Optometry", "type": "University Center / Doctoral Degree Granting Institution", "city": "New York City"}, {"code": "orange-county-community-college", "name": "Orange County Community College", "type": "Community College", "city": "Middletown"}, {"code": "suny-oswego", "name": "SUNY Oswego", "type": "University College", "city": "Oswego"}, {"code": "suny-plattsburgh", "name": "SUNY Plattsburgh", "type": "University College", "city": "Plattsburgh"}, {"code": "suny-potsdam", "name": "SUNY Potsdam", "type": "University College", "city": "Potsdam"}, {"code": "purchase-college", "name": "Purchase College", "type": "University College", "city": "Purchase"}, {"code": "rockland-community-college", "name": "Rockland Community College", "type": "Community College", "city": "Suffern"}, {"code": "suny-schenectady-county-community-college", "name": "SUNY Schenectady County Community College", "type": "Community College", "city": "Schenectady"}, {"code": "stony-brook-university", "name": "Stony Brook University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Stony Brook"}, {"code": "suffolk-county-community-college", "name": "Suffolk County Community College", "type": "Community College", "city": "Selden, Riverhead and Brentwood"}, {"code": "sullivan-county-community-college", "name": "Sullivan County Community College", "type": "Community College", "city": "Loch Sheldrake"}, {"code": "suny-polytechnic-institute", "name": "SUNY Polytechnic Institute", "type": "University Center / Doctoral Degree Granting Institution", "city": "Utica"}, {"code": "tompkins-cortland-community-college", "name": "Tompkins Cortland Community College", "type": "Community College", "city": "Dryden"}, {"code": "ulster-county-community-college", "name": "Ulster County Community College", "type": "Community College", "city": "Stone Ridge"}, {"code": "upstate-medical-university", "name": "Upstate Medical University", "type": "University Center / Doctoral Degree Granting Institution", "city": "Syracuse"}, {"code": "westchester-community-college", "name": "Westchester Community College", "type": "Community College", "city": "Valhalla"}];
+const SUNY_CAMPUS_COUNT=SUNY_CAMPUSES.length;
+const programs=[
+ {id:"bs-cs",name:"B.S. Computer Science",level:"Bachelor's",campus:"Online",credits:120,price:"$485 / credit",desc:"Software, systems and data — build the foundation for a career in tech with project-based courses.",tag:"Most popular"},
+ {id:"mba",name:"M.B.A. — Business Administration",level:"Master's",campus:"SUNY Schenectady County Community College",credits:36,price:"$720 / credit",desc:"Leadership, strategy and analytics for working professionals. Evening and hybrid options.",tag:"Hybrid"},
+ {id:"ms-da",name:"M.S. Data Analytics",level:"Master's",campus:"Online",credits:30,price:"$695 / credit",desc:"Statistics, machine learning and visualization applied to real organizational problems.",tag:"STEM"},
+ {id:"bsn",name:"B.S.N. Nursing (RN to BSN)",level:"Bachelor's",campus:"Hudson Valley Community College",credits:60,price:"$510 / credit",desc:"For licensed RNs: advance practice, community health and leadership — clinicals near you.",tag:"Health"},
+ {id:"med",name:"M.Ed. Educational Leadership",level:"Master's",campus:"University at Albany",credits:33,price:"$540 / credit",desc:"Prepare to lead schools and programs, with a practicum in your own district.",tag:"Education"},
+ {id:"cyber-cert",name:"Cybersecurity Certificate",level:"Certificate",campus:"Online",credits:18,price:"$450 / credit",desc:"Stackable, career-focused certificate in security operations and risk — in as little as 8 months.",tag:"Stackable"},
+];
+const courses=[
+ {id:"cs410",code:"CS 410",name:"Machine Learning Fundamentals",type:"credit",credits:3,ceu:null,price:1455,priceLabel:"$1,455 · $485/credit",format:"Online",when:"Spring 2027 · Term-based",prereq:"Prereq: CS 301",desc:"Supervised learning, model evaluation and applied ML projects."},
+ {id:"cs420",code:"CS 420",name:"Cloud & Distributed Systems",type:"credit",credits:3,ceu:null,price:1455,priceLabel:"$1,455 · $485/credit",format:"Online",when:"Spring 2027 · Term-based",prereq:"Prereq: CS 335",desc:"Cloud architecture, distributed systems and reliability."},
+ {id:"cs350",code:"CS 350",name:"Software Engineering Studio",type:"credit",credits:3,ceu:null,price:1455,priceLabel:"$1,455 · $485/credit",format:"University at Albany · Hybrid",when:"Spring 2027 · Term-based",prereq:"Prereq: CS 301",desc:"Team studio building and shipping a real product."},
+ {id:"stat320",code:"STAT 320",name:"Applied Statistics for Computing",type:"credit",credits:3,ceu:null,price:1455,priceLabel:"$1,455 · $485/credit",format:"Online",when:"Spring 2027 · Term-based",prereq:"Prereq: MATH 210",desc:"Inference, regression and experimentation for computing."},
+ {id:"pm101",code:"CE PM-101",name:"Project Management Fundamentals",type:"noncredit",credits:null,ceu:"1.2 CEU",category:"Business",cert:"Certificate available",seats:"Open enrollment",price:499,priceLabel:"$499 flat fee",format:"Online · Self-paced",when:"Start anytime · 4 weeks",prereq:"No prerequisites",desc:"Workforce prep: scope, schedules, risk and stakeholder communication."},
+ {id:"dv201",code:"CE DV-201",name:"Data Visualization with Tableau",type:"noncredit",credits:null,ceu:"0.8 CEU",category:"IT & Technology",cert:"Certificate available",seats:"Live cohort · 22 seats",price:349,priceLabel:"$349 flat fee",format:"Online · Live sessions",when:"Feb 2–27, 2027 · Short session",prereq:"No prerequisites",desc:"Dashboards and storytelling with data for professionals."},
+ {id:"sec301",code:"CE SEC-301",name:"Security+ Exam Preparation",type:"noncredit",credits:null,ceu:"2.0 CEU",category:"IT & Technology",cert:"Certificate available (exam prep)",seats:"Cohort · 18 of 24 seats filled",price:899,priceLabel:"$899 flat fee",format:"Online + SUNY Canton lab (sample)",when:"Jan 19–Feb 28, 2027 · 6 weeks",prereq:"IT experience recommended",desc:"Intensive workforce prep for CompTIA Security+ (voucher not included, sample)."},
+ {id:"span110",code:"CE LANG-110",name:"Spanish for Healthcare Professionals",type:"noncredit",credits:null,ceu:"1.0 CEU",category:"Language",cert:"Completion certificate",seats:"Cohort · 14 of 20 seats filled",price:299,priceLabel:"$299 flat fee",format:"SUNY New Paltz · Evenings (sample)",when:"Mar 2027 cohort · Start-anytime enrollment",prereq:"No prerequisites",desc:"Practical workplace and personal-enrichment Spanish for care settings."},
+ {id:"cna201",code:"CE CNA-201",name:"Certified Nursing Assistant (CNA) Prep",type:"noncredit",credits:null,ceu:"7.5 CEU",category:"Healthcare",cert:"Certificate available — state exam prep",seats:"Cohort · 20 of 24 seats filled · Waitlist open",price:1295,priceLabel:"$1,295 flat fee",format:"Hudson Valley Community College · Hybrid (lab + online, sample)",when:"Next cohort: Feb 2, 2027 · 8 weeks",prereq:"No prerequisites · Background check for clinicals (sample)",desc:"Healthcare workforce pathway preparing career changers for CNA clinical skills and the state competency exam."},
+ {id:"it150",code:"CE IT-150",name:"IT Help Desk & CompTIA A+ Foundations",type:"noncredit",credits:null,ceu:"1.8 CEU",category:"IT & Technology",cert:"Certificate available — A+ exam prep",seats:"Open enrollment",price:799,priceLabel:"$799 flat fee",format:"Online · Self-paced with mentor labs",when:"Start anytime · 6 weeks self-paced",prereq:"No prerequisites",desc:"Entry-level IT support skills for career changers: troubleshooting, ticketing, hardware, and customer service."},
+ {id:"hvac220",code:"CE HVAC-220",name:"HVAC Fundamentals — Trades Pathway",type:"noncredit",credits:null,ceu:"6.0 CEU",category:"Trades",cert:"Certificate available — EPA 608 prep",seats:"Cohort · 12 of 16 seats filled",price:1450,priceLabel:"$1,450 flat fee",format:"Alfred State College · In-person trades lab (sample)",when:"Next cohort: Mar 3, 2027 · 10 weeks, evenings",prereq:"No prerequisites · Safety orientation required",desc:"Hands-on trades training in heating, cooling, and refrigeration fundamentals for employer-sponsored and working adults."},
+ {id:"re101",code:"CE RE-101",name:"Real Estate Pre-Licensing",type:"noncredit",credits:null,ceu:"4.5 CEU",category:"Business",cert:"Certificate available — licensing exam prep",seats:"Cohort · 28 of 40 seats filled",price:649,priceLabel:"$649 flat fee",format:"SUNY Schenectady County Community College · Hybrid evenings (sample)",when:"Next cohort: Feb 9, 2027 · 7 weeks",prereq:"No prerequisites",desc:"State-required pre-licensing coursework (sample hours) for aspiring agents, delivered for working adults in evenings."},
+ {id:"mkt130",code:"CE MKT-130",name:"Digital Marketing Essentials",type:"noncredit",credits:null,ceu:"1.0 CEU",category:"Business",cert:"Certificate available",seats:"Open enrollment",price:449,priceLabel:"$449 flat fee",format:"Online · Self-paced",when:"Start anytime · 4 weeks",prereq:"No prerequisites",desc:"SEO, social, email, and analytics essentials for small-business staff and career changers — employer-sponsored friendly."},
+];
+courses.forEach(c=>{c.campuses=c.campuses||[]});
+function assignCampuses(id,list){const c=courses.find(x=>x.id===id); if(c) c.campuses=list}
+assignCampuses("cs410",["Online","University at Albany","Binghamton University","Stony Brook University"]);
+assignCampuses("cs420",["Online","University at Albany","University at Buffalo"]);
+assignCampuses("cs350",["University at Albany","Online"]);
+assignCampuses("stat320",["Online","SUNY Oswego","University at Albany"]);
+assignCampuses("pm101",["Online","SUNY Empire State University","SUNY Broome Community College","Monroe Community College"]);
+assignCampuses("dv201",["Online","SUNY Empire State University","Fashion Institute of Technology (FIT)"]);
+assignCampuses("sec301",["Online","SUNY Canton","Farmingdale State College","SUNY Polytechnic Institute"]);
+assignCampuses("span110",["SUNY New Paltz","Westchester Community College","Online"]);
+assignCampuses("cna201",["Hudson Valley Community College","Erie Community College","Monroe Community College","SUNY Adirondack"]);
+assignCampuses("it150",["Online","Genesee Community College","Mohawk Valley Community College","SUNY Empire State University"]);
+assignCampuses("hvac220",["Alfred State College","SUNY Canton","SUNY Delhi","Farmingdale State College"]);
+assignCampuses("re101",["SUNY Schenectady County Community College","Nassau Community College","Online"]);
+assignCampuses("mkt130",["Online","SUNY Empire State University","Suffolk County Community College"]);
+programs.forEach(pr=>{pr.campuses=pr.campus==="Online"?["Online","SUNY Empire State University"]:[pr.campus,"Online"]});
+const progExtra={"bs-cs":["Online","University at Albany","Binghamton University"],"mba":["SUNY Schenectady County Community College","Online","University at Albany"],"ms-da":["Online","Stony Brook University"],"bsn":["Hudson Valley Community College","Online"],"med":["University at Albany","SUNY New Paltz"],"cyber-cert":["Online","SUNY Canton","SUNY Polytechnic Institute"]};
+programs.forEach(pr=>{if(progExtra[pr.id]) pr.campuses=progExtra[pr.id]; pr.campus=pr.campuses.join(" · ")});
+function campusMatches(item){if(campusFilter==="all")return true; const list=item.campuses||[item.campus||item.format||""]; if(campusFilter==="Online")return list.includes("Online")||/Online/i.test(item.format||""); return list.includes(campusFilter)}
+function campusAvailText(c){const l=c.campuses||[]; return l.length?("Available at "+l.length+" campus"+(l.length===1?"":"es")+": "+l.slice(0,3).join(", ")+(l.length>3?" +"+(l.length-3)+" more":"")):""}
+let enrolledCredit=[
+ {code:"CS 301",name:"Data Structures & Algorithms",format:"Online",credits:3,term:"Fall 2026",status:"Enrolled"},
+ {code:"CS 335",name:"Database Systems",format:"University at Albany · Tue/Thu",credits:3,term:"Fall 2026",status:"Enrolled"},
+ {code:"MATH 210",name:"Discrete Mathematics",format:"Online",credits:3,term:"Fall 2026",status:"Enrolled"},
+ {code:"ENG 302",name:"Technical Writing",format:"Online",credits:3,term:"Fall 2026",status:"Enrolled"},
+];
+let enrolledNonCredit=[{code:"CE EXL-090",name:"Excel for Professionals",format:"Online · Self-paced",ceu:"0.6 CEU",when:"Sep 2026",status:"Completed"}];
+let cart=[courses[0],courses[4]];
+let discoverType='noncredit', programType='all', discoverCategory='all', lastOrder=null;
+function money(n){return "$"+n.toLocaleString()}
+function typeBadge(c){return c.type==='credit'?'<span class="badge credit">For-Credit · Degree</span>':'<span class="badge noncredit">Non-Credit · Continuing Ed</span>'}
+function creditLine(c){return c.type==='credit'?(c.credits+' credits · Counts toward degree'):(c.ceu+' · Does NOT count toward degree')}
+function totals(){const creditSub=cart.filter(c=>c.type==='credit').reduce((s,c)=>s+c.price,0);const nonSub=cart.filter(c=>c.type==='noncredit').reduce((s,c)=>s+c.price,0);const fees=creditSub?184:0;const aid=creditSub?Math.min(1200,Math.round((creditSub+fees)*0.35)):0;return{creditSub,nonSub,fees,aid,total:creditSub+nonSub+fees-aid}}
+function totalsHTML(){const t=totals();return '<div class="cart-line"><span>For-credit tuition</span><b>'+money(t.creditSub)+'</b></div><div class="cart-line"><span>Non-credit flat fees <small style="color:var(--muted)">(not aid-eligible)</small></span><b>'+money(t.nonSub)+'</b></div>'+(t.fees?'<div class="cart-line"><span>Technology fee (for-credit)</span><b>'+money(t.fees)+'</b></div>':'')+(t.aid?'<div class="cart-line"><span>Estimated aid <small style="color:var(--muted)">(for-credit only, sample)</small></span><b style="color:var(--success)">-'+money(t.aid)+'</b></div>':'')+'<div class="total"><span>Total due (simulation)</span><span>'+money(t.total)+'</span></div>'}
+function courseCard(c){const inCart=cart.some(x=>x.id===c.id);const enrolled=[...enrolledCredit,...enrolledNonCredit].some(x=>x.name===c.name);return '<article class="card program"><div class="program-top">'+typeBadge(c)+'<span class="badge grey">'+c.format+'</span></div><div><b style="color:var(--brand)">'+c.code+'</b><h3 style="font-size:16px;margin-top:4px"><button type="button" class="course-title-btn" data-action="course-detail" data-id="'+c.id+'" aria-label="View details for '+c.code+' '+c.name+'">'+c.name+'</button></h3></div><p style="margin:0;color:var(--muted);font-size:14px">'+c.desc+'</p><div class="meta"><span>🎓 '+creditLine(c)+'</span><span>🗓️ '+c.when+'</span><span>📌 '+c.prereq+'</span><span>'+campusAvailText(c)+'</span></div><div><span class="price">'+c.priceLabel+'</span></div><div class="card-actions"><button class="btn '+(inCart||enrolled?'btn-neutral':'btn-brand')+' btn-sm" '+((inCart||enrolled)?'disabled':'')+' data-action="add-cart" data-id="'+c.id+'">'+(enrolled?'✓ Enrolled / Registered':inCart?'✓ In cart':'Add to cart')+'</button><button class="btn btn-outline btn-sm" data-action="course-detail" data-id="'+c.id+'">View details</button></div></article>'}
+
+const notifications=[
+ {id:'n-aid',type:'Aid',icon:'🎓',title:'State Grant disbursed',body:'Your Fall State Opportunity Grant ($1,600) has disbursed to your account.',time:'Oct 14 · 9:12 AM',view:'payments',unread:true},
+ {id:'n-advising',type:'Advising',icon:'🗓️',title:'Advisor replied to your case',body:'Maya Rivera: “I’ve reviewed your degree plan — let’s meet Oct 22 to clear your hold.”',time:'Oct 12 · 2:04 PM',view:'support',unread:true},
+ {id:'n-billing',type:'Billing',icon:'💳',title:'Payment plan installment due Nov 1',body:'Installment 4 of 4 — $412.00 due Nov 1. Auto-pay is on (Visa ••4412).',time:'Oct 11 · 8:00 AM',view:'payments',unread:true},
+ {id:'n-enroll',type:'Enrollment',icon:'📝',title:'Spring 2027 enrollment opens Nov 3',body:'Your saved cart has courses ready. For-credit enrollment is term-based.',time:'Oct 9 · 10:30 AM',view:'programs',unread:false},
+ {id:'n-program',type:'Program news',icon:'📣',title:'New Cybersecurity certificate',body:'A new stackable certificate is available Online — for-credit and non-credit pathways.',time:'Oct 8 · 1:15 PM',view:'discover',unread:false},
+];
+function unreadCount(){return notifications.filter(n=>n.unread).length}
+function notifButton(n,cls){
+ return '<button type="button" class="'+cls+(n.unread?' unread':'')+'" data-action="notif-open" data-id="'+n.id+'" role="listitem" aria-label="'+n.type+': '+n.title+(n.unread?' (unread)':'')+'">'
+ +'<span class="notif-icon" aria-hidden="true">'+n.icon+'</span>'
+ +'<span style="flex:1;min-width:0"><span class="notif-title">'+n.title+'</span><span class="notif-body" style="display:block">'+n.body+'</span>'
+ +'<span class="notif-meta"><span class="badge">'+n.type+'</span><span class="notif-time">'+n.time+'</span></span></span>'
+ +(n.unread?'<span class="unread-dot" aria-hidden="true"></span>':'')
+ +'</button>';
+}
+function renderNotifications(){
+ try{
+  const count=unreadCount();
+  const badge=document.getElementById('notifBadge');
+  if(badge){badge.textContent=count; badge.style.display=count?'grid':'none'}
+  const bell=document.getElementById('notifBell');
+  if(bell) bell.setAttribute('aria-label', count?('Notifications, '+count+' unread'):'Notifications, no unread');
+  const ct=document.getElementById('notifCountText'); if(ct) ct.textContent=count?(count+' unread'):'All caught up';
+  const list=document.getElementById('notifList');
+  if(list) list.innerHTML=notifications.length?notifications.map(n=>notifButton(n,'notif-item')).join(''):'<div class="notif-empty">No notifications yet.</div>';
+  const hb=document.getElementById('homeNotifBadge'); if(hb) hb.textContent=count?(count+' unread'):'All read';
+  const home=document.getElementById('homeNotifList');
+  if(home) home.innerHTML='<div>'+notifications.map(n=>notifButton(n,'home-notif-btn')).join('')+'</div>';
+  const sb=document.getElementById('supportNotifBadge'); if(sb) sb.textContent=count?(count+' unread'):'All read';
+  const sup=document.getElementById('supportNotifList');
+  if(sup){
+    const ids=['n-advising','n-aid','n-enroll'];
+    sup.innerHTML='<div>'+ids.map(id=>{const n=notifications.find(x=>x.id===id); return n?notifButton(n,'msg-row'):''}).join('')+'</div>';
+  }
+ }catch(e){try{console.warn('[prototype] renderNotifications failed',e)}catch(_){}}
+}
+function openNotifications(){
+ const panel=document.getElementById('notifPanel'), bell=document.getElementById('notifBell');
+ if(!panel||!bell) return;
+ renderNotifications(); panel.hidden=false; bell.setAttribute('aria-expanded','true');
+ try{const h=document.getElementById('notifPanelTitle'); if(h) h.focus({preventScroll:true})}catch(e){}
+}
+function closeNotifications(refocus){
+ const panel=document.getElementById('notifPanel'), bell=document.getElementById('notifBell');
+ if(!panel||!bell) return;
+ panel.hidden=true; bell.setAttribute('aria-expanded','false');
+ if(refocus){try{bell.focus({preventScroll:true})}catch(e){}}
+}
+function toggleNotifications(){
+ const panel=document.getElementById('notifPanel');
+ if(panel&&panel.hidden) openNotifications(); else closeNotifications();
+}
+function markAllRead(){
+ notifications.forEach(n=>n.unread=false); renderNotifications(); toast('All notifications marked as read.');
+}
+function openNotification(id){
+ const n=notifications.find(x=>x.id===id); if(!n) return;
+ const wasUnread=n.unread; n.unread=false; renderNotifications(); closeNotifications();
+ showView(n.view);
+ toast((wasUnread?'Marked as read: ':'')+n.icon+' '+n.title+' — '+n.body);
+}
+
+function detailRow(label,value){return '<div class="cart-line"><span>'+label+'</span><b style="text-align:right">'+value+'</b></div>'}
+function showDetail(d){
+ const box=document.getElementById('courseDetailContent'); const title=document.getElementById('courseModalTitle');
+ if(!box) return;
+ if(title) title.textContent=d.heading;
+ let addBtn='';
+ if(d.addId){
+   const c=courses.find(x=>x.id===d.addId);
+   const inCart=c&&cart.some(x=>x.id===c.id);
+   const enrolled=c&&[...enrolledCredit,...enrolledNonCredit].some(x=>x.name===c.name);
+   addBtn='<button class="btn '+(inCart||enrolled?'btn-neutral':'btn-brand')+'" '+(inCart||enrolled?'disabled':'')+' data-action="add-cart" data-id="'+d.addId+'">'+(enrolled?'✓ Enrolled / Registered':inCart?'✓ In cart':'Add to cart')+'</button>';
+ }
+ box.innerHTML='<div class="program-top">'+d.badgeHtml+'<span class="badge grey">'+d.format+'</span></div>'
+  +'<p style="color:var(--muted);margin-top:10px">'+d.desc+'</p>'
+  +'<div class="detail-rows">'
+  +detailRow('Course / program', d.codeLine)
+  +detailRow('Delivery / campus', d.format)
+  +detailRow('Schedule', d.when)
+  +detailRow(d.type==='credit'?'Credits':'CEUs', d.creditValue)
+  +detailRow('Price', d.priceText)
+  +(d.extraRows||'')
+  +detailRow('Prerequisites', d.prereq)
+  +detailRow('Counts toward degree?', d.countsHtml)
+  +detailRow('Financial aid', d.aidText)
+  +(d.statusText?detailRow('Your status', d.statusText):'')
+  +'</div>'
+  +(d.noteHtml?'<p class="note">'+d.noteHtml+'</p>':'')
+  +'<div class="card-actions">'+addBtn
+  +(d.program?'<button class="btn btn-gold" data-action="detail-request-info">Request info</button><button class="btn btn-outline" data-action="detail-browse-courses">Browse courses</button>':'')
+  +'<button class="btn btn-neutral" data-action="close-modal" data-modal="courseModal">Close</button></div>';
+ openModal('courseModal');
+}
+function courseToDetail(c, statusText){
+ const perCredit=c.type==='credit'&&c.credits?Math.round(c.price/c.credits):null;
+ return {
+  heading:c.code+' — '+c.name, badgeHtml:typeBadge(c), format:c.format, desc:c.desc,
+  codeLine:c.code+' · '+c.name, when:c.when, type:c.type,
+  creditValue:c.type==='credit'?(c.credits+' credits'):(c.ceu+' (continuing education units)'),extraRows:('<div class="cart-line"><span>Campus availability (sample)</span><b>'+((c.campuses||[]).join(', ')||c.format)+'</b></div>')+(c.type==='noncredit'?('<div class="cart-line"><span>Category</span><b>'+(c.category||'Continuing Ed')+'</b></div><div class="cart-line"><span>Certificate</span><b>'+(c.cert||'—')+'</b></div><div class="cart-line"><span>Seats / capacity</span><b>'+(c.seats||'Open enrollment')+'</b></div>'):''),
+  priceText:c.type==='credit'?('$'+perCredit+' per credit × '+c.credits+' credits = '+money(c.price)+' per course'):(money(c.price)+' flat fee (no per-credit tuition)'),
+  prereq:c.prereq,
+  countsHtml:c.type==='credit'?'<span style="color:var(--success)">Yes — counts toward degree progress when completed</span>':'<span style="color:var(--warning)">Does NOT count toward degree credit</span>',
+  aidText:c.type==='credit'?'May be aid-eligible — estimated aid is applied to for-credit tuition at checkout (sample)':'Not aid-eligible — non-credit flat fees are not eligible for federal/state financial aid',
+  noteHtml:c.type==='noncredit'?'Plainly stated: this non-credit course is for continuing education, workforce development, or personal enrichment. <b>It does NOT count toward degree credit</b>, does not change your degree-progress percentage, and is listed under Continuing Education after enrollment.':null,
+  addId:c.id, statusText:statusText||null, program:false
+ };
+}
+function openCourseDetail(id){
+ const c=courses.find(x=>x.id===id); if(!c){toast('Course details not found (sample data).');return}
+ const enrolled=[...enrolledCredit,...enrolledNonCredit].some(x=>x.name===c.name);
+ showDetail(courseToDetail(c, enrolled?'Enrolled / Registered':null));
+}
+function openEnrolledDetail(kind,code){
+ const cat=courses.find(x=>x.code===code);
+ if(cat){openCourseDetail(cat.id);return}
+ if(kind==='credit'){
+   const e=enrolledCredit.find(x=>x.code===code); if(!e) return;
+   showDetail({heading:e.code+' — '+e.name,badgeHtml:'<span class="badge credit">For-Credit · Degree</span>',format:e.format,desc:'You are currently enrolled in this for-credit course. Registration and progress are tracked in this community; class materials and instruction are provided by your instructor (this community is not an LMS).',codeLine:e.code+' · '+e.name,when:e.term+' · Term-based',type:'credit',creditValue:e.credits+' credits',priceText:'Included in your '+e.term+' for-credit tuition (see Payments & Aid)',prereq:'Prerequisites satisfied at enrollment (sample record)',countsHtml:'<span style="color:var(--success)">Yes — counts toward degree progress when completed</span>',aidText:'For-credit tuition may be aid-eligible (sample)',addId:null,statusText:e.status,program:false});
+ } else {
+   const e=enrolledNonCredit.find(x=>x.code===code); if(!e) return;
+   showDetail({heading:e.code+' — '+e.name,badgeHtml:'<span class="badge noncredit">Non-Credit · Continuing Ed</span>',format:e.format,desc:'This is a non-credit continuing education course from your SUNY Pilot record.',codeLine:e.code+' · '+e.name,when:e.when,type:'noncredit',creditValue:e.ceu+' (continuing education units)',priceText:'Flat fee paid at enrollment (sample record)',prereq:'No prerequisites',countsHtml:'<span style="color:var(--warning)">Does NOT count toward degree credit</span>',aidText:'Not aid-eligible — non-credit courses are not eligible for federal/state financial aid',noteHtml:'This course appears under Continuing Education only and never changes your degree-progress percentage.',addId:null,statusText:e.status,program:false});
+ }
+}
+function openProgramDetail(id){
+ const pr=programs.find(x=>x.id===id); if(!pr){toast('Program details not found (sample data).');return}
+ const per=parseInt((pr.price||'').replace(/[^0-9]/g,''),10)||0;
+ const total=per&&pr.credits?money(per*pr.credits):pr.price;
+ const isCert=pr.level.toLowerCase().includes('certificate');
+ showDetail({heading:pr.name,badgeHtml:'<span class="badge">'+pr.level+'</span>',format:pr.campus,desc:pr.desc+' This SUNY Pilot program is delivered through the Learner Portal for discovery, enrollment, aid, and advising — with courses taken online and/or on campus as listed.',codeLine:pr.name+' · '+pr.tag,when:isCert?'Term-based and stackable pathways (sample)':'Term-based · Fall / Spring starts (sample)',type:'credit',creditValue:pr.credits+' credits',priceText:pr.price+' · Estimated total tuition '+total+' ('+pr.credits+' credits, sample, before aid/fees)',prereq:isCert?'Varies by pathway — see individual courses':'Admission and placement requirements apply (sample)',countsHtml:isCert?'For-credit pathway courses count toward degree progress when completed; non-credit options do not':'<span style="color:var(--success)">Yes — this is a for-credit degree program</span>',aidText:'Degree programs may be aid-eligible; state/federal aid is shown in Payments & Aid (sample)',addId:null,statusText:null,program:true,noteHtml:'Select Request info to talk with an Enrollment Specialist, or Browse courses to see for-credit and non-credit courses you can add to your cart now.'});
+}
+
+function renderPrograms(list){
+ document.getElementById('programGrid').innerHTML=list.map(p=>`<article class="card program"><div class="program-top"><span class="badge">${p.level}</span><span class="badge green">${p.tag}</span></div><h3><button type="button" class="course-title-btn" data-action="program-detail" data-id="${p.id}" aria-label="View details for ${p.name}">${p.name}</button></h3><p style="margin:0;color:var(--muted);font-size:14px">${p.desc}</p><div class="meta"><span>📍 ${(p.campuses||[p.campus]).join(", ")}</span><span>🎓 ${p.credits} credits</span></div><div><span class="price">${p.price}</span> <small style="color:var(--muted)">sample tuition</small></div><div class="card-actions"><button class="btn btn-brand btn-sm" data-action="open-modal" data-modal="requestModal">Request info</button><button class="btn btn-outline btn-sm" data-action="program-detail" data-id="${p.id}">View details</button><button class="btn btn-neutral btn-sm" data-action="toast" data-toast="${p.name} saved to favorites (sample).">♡ Save</button></div></article>`).join('');
+ document.getElementById('noResults').style.display=list.length?'none':'block';
+}
+let campusFilter='all';
+function setCampus(c){campusFilter=c;document.querySelectorAll('[data-campus-select]').forEach(s=>{try{s.value=c}catch(e){}});document.querySelectorAll('[data-campus]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.campus===c?'true':'false'));const n=document.getElementById('campusCountNote');if(n)n.textContent=c==='all'?('All campuses ('+SUNY_CAMPUS_COUNT+') + Online'):c==='Online'?'Online only — courses/programs available online':(c+' — showing matching sample availability');filterPrograms();renderCatalogs()}
+function filterPrograms(){const q=(document.getElementById('q').value||document.getElementById('globalSearch').value||'').toLowerCase();renderPrograms(programs.filter(p=>campusMatches(p)&&(p.name+' '+p.desc+' '+p.level+' '+(p.campuses||[]).join(' ')).toLowerCase().includes(q)))}
+function setDiscoverCategory(cat){discoverCategory=cat;discoverType='noncredit';document.querySelectorAll('[data-cat]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cat===cat?'true':'false'));document.querySelectorAll('[data-dtype]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.dtype==='noncredit'?'true':'false'));renderCatalogs()}
+function setDiscoverType(ty){discoverType=ty;document.querySelectorAll('[data-dtype]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.dtype===ty?'true':'false'));renderCatalogs()}
+function setProgramType(ty){programType=ty;document.querySelectorAll('[data-ptype]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ptype===ty?'true':'false'));renderCatalogs()}
+function renderCatalogs(){
+ const d=courses.filter(c=>(discoverType==='all'||c.type===discoverType)&&(discoverType!=='noncredit'||discoverCategory==='all'||c.category===discoverCategory)&&campusMatches(c));
+ const pr=courses.filter(c=>programType==='all'||c.type===programType);
+ const dg=document.getElementById('discoverCourseGrid'); if(dg){dg.innerHTML=d.map(courseCard).join('');document.getElementById('discoverCount').textContent='Showing '+d.length+' of '+courses.length+' courses'+(campusFilter==='all'?' · All campuses (64)':campusFilter==='Online'?' · Online':' · '+campusFilter)}
+ document.getElementById('courseGrid').innerHTML=pr.map(courseCard).join('');
+ renderCart(); renderEnrolled();
+}
+function renderEnrolled(){
+ const ec=document.getElementById('enrolledCreditBody'); if(ec) ec.innerHTML=enrolledCredit.map(c=>'<tr><td><b>'+c.code+'</b></td><td><button type="button" class="course-title-btn" data-action="enrolled-detail" data-kind="credit" data-code="'+c.code+'">'+c.name+'</button></td><td>'+c.format+'</td><td>'+c.credits+'</td><td>'+c.term+'</td><td><span class="badge green">'+c.status+'</span></td></tr>').join('');
+ const en=document.getElementById('enrolledNonCreditBody'); if(en) en.innerHTML=enrolledNonCredit.map(c=>'<tr><td><b>'+c.code+'</b></td><td><button type="button" class="course-title-btn" data-action="enrolled-detail" data-kind="noncredit" data-code="'+c.code+'">'+c.name+'</button></td><td>'+c.format+'</td><td>'+c.ceu+'</td><td>'+c.when+'</td><td><span class="badge '+(c.status.includes('Completed')?'grey':'green')+'">'+c.status+'</span></td></tr>').join('');
+ try{
+   const earned=enrolledNonCredit.filter(c=>c.status.includes('Completed')).reduce((s,c)=>s+(parseFloat(c.ceu)||0),0);
+   const active=enrolledNonCredit.filter(c=>!c.status.includes('Completed'));
+   const certEarned=enrolledNonCredit.filter(c=>c.status.includes('Completed')).length;
+   const hs=document.getElementById('homeCeSummary'); if(hs) hs.innerHTML='<b style="color:var(--brand)">CEUs earned: '+earned.toFixed(1)+'</b> · CEUs in progress: '+active.reduce((s,c)=>s+(parseFloat(c.ceu)||0),0).toFixed(1)+' · Certificates: '+certEarned+' earned, '+active.length+' in progress'+(active.length?'<br>Next: '+active.map(c=>c.name+' — '+c.when).join('; '):'');
+   const ce=document.getElementById('ceEarned'); if(ce) ce.textContent=earned.toFixed(1);
+   const cc=document.getElementById('ceCerts'); if(cc) cc.textContent=certEarned+' earned · '+active.length+' in progress';
+   const cu=document.getElementById('ceUpcoming'); if(cu) cu.textContent=active.length?active[0].when:'—';
+ }catch(e){}
+ const hc=document.getElementById('homeContEd'); if(hc) hc.innerHTML='<ul class="list">'+enrolledNonCredit.map(c=>'<li><span><button type="button" class="course-title-btn" data-action="enrolled-detail" data-kind="noncredit" data-code="'+c.code+'">'+c.name+'</button> — '+c.ceu+' · '+c.format+'</span><span class="badge '+(c.status.includes('Completed')?'grey':'green')+'">'+c.status+'</span></li>').join('')+'</ul>';
+}
+function renderCart(){
+ document.getElementById('cartLines').innerHTML=cart.length?cart.map(c=>'<div class="cart-line"><span>'+typeBadge(c)+'<br><b>'+c.code+'</b> · '+creditLine(c)+'<br><small style="color:var(--muted)"><button type="button" class="course-title-btn" data-action="course-detail" data-id="'+c.id+'">'+c.name+'</button> — '+c.when+'</small></span><span style="text-align:right"><b>'+money(c.price)+'</b><br><button class="btn btn-neutral btn-sm" aria-label="Remove '+c.code+'" data-action="remove-cart" data-id="'+c.id+'">Remove ✕</button></span></div>').join(''):'<p style="color:var(--muted)">Your cart is empty. Add for-credit or non-credit courses.</p>';
+ const ct=document.getElementById('cartTotals'); if(ct) ct.innerHTML=cart.length?totalsHTML():'';
+ document.getElementById('cartCount').textContent=cart.length;
+ document.getElementById('kpiCart').textContent=cart.length+(cart.length===1?' course':' courses');
+ renderCheckoutCart();
+}
+function addToCart(id){const c=courses.find(x=>x.id===id);if(c&&!cart.some(x=>x.id===id)){cart.push(c);renderCatalogs();toast(c.code+' ('+(c.type==='credit'?'For-Credit':'Non-Credit')+') added to cart.');try{const m=document.getElementById('courseModal');if(m&&m.open){showDetail(courseToDetail(c,null));const h=document.getElementById('courseModalTitle');if(h)h.focus({preventScroll:true})}}catch(e){}}}
+function removeFromCart(id){const c=cart.find(x=>x.id===id);cart=cart.filter(x=>x.id!==id);renderCatalogs();toast((c?c.code:'Course')+' removed from cart.')}
+function goCheckout(){if(!cart.length){toast('Your cart is empty — add a course first.');showView('programs');return}showView('checkout');setStep(1);renderCheckoutCart()}
+function renderCheckoutCart(){const el=document.getElementById('checkoutCart');if(!el)return;el.innerHTML=cart.length?'<div class="table-wrap"><table aria-label="Checkout cart"><thead><tr><th>Course</th><th>Type</th><th>Schedule</th><th>Price</th><th></th></tr></thead><tbody>'+cart.map(c=>'<tr><td><b>'+c.code+'</b> — <button type="button" class="course-title-btn" data-action="course-detail" data-id="'+c.id+'">'+c.name+'</button><br><small style="color:var(--muted)">'+creditLine(c)+'</small></td><td>'+typeBadge(c)+'</td><td>'+c.when+'<br><small>'+c.format+'</small></td><td><b>'+money(c.price)+'</b></td><td><button class="btn btn-neutral btn-sm" data-action="remove-cart" data-id="'+c.id+'">Remove</button></td></tr>').join('')+'</tbody></table></div>':'<p style="color:var(--muted)">Cart is empty.</p>';document.getElementById('checkoutTotals1').innerHTML=cart.length?totalsHTML():''}
+function setStep(n){document.querySelectorAll('.checkout-step').forEach(s=>s.classList.toggle('active',s.id==='step'+n));document.querySelectorAll('#stepsBar li').forEach(li=>{const v=+li.dataset.step;li.classList.toggle('current',v===n);li.classList.toggle('done',v<n)});window.scrollTo({top:0,behavior:'smooth'})}
+function togglePlan(r){document.getElementById('planNote').style.display=r.value==='card'?'none':'block'}
+function selectedPay(){const r=document.querySelector('input[name="pay"]:checked');return r?r.value:'card'}
+function buildReview(){const pay=selectedPay();const payLabel=pay==='card'?'Pay in full — sample card ••••4412 (placeholder, no charge)':pay==='plan'?'Payment plan (placeholder)':'Estimated aid + pay remainder (placeholder)';document.getElementById('reviewBox').innerHTML='<div class="summary-box"><p><b>Learner:</b> '+document.getElementById('co-name').value+' · '+document.getElementById('co-email').value+'<br><b>Home campus / business unit:</b> '+document.getElementById('co-campus').value+' · <b>Type:</b> '+document.getElementById('co-type').value+'<br><b>Payment:</b> '+payLabel+'</p></div><div style="margin-top:14px">'+cart.map(c=>'<div class="cart-line"><span>'+typeBadge(c)+' <b>'+c.code+'</b> — <button type="button" class="course-title-btn" data-action="course-detail" data-id="'+c.id+'">'+c.name+'</button><br><small style="color:var(--muted)">'+creditLine(c)+' · '+c.when+'</small></span><b>'+money(c.price)+'</b></div>').join('')+'</div>'+totalsHTML()+'<p class="note">For-credit will show as Registered and counts toward degree progress when completed. Non-credit shows under Continuing Education and never counts toward degree.</p>'}
+function completeCheckout(){
+ if(!cart.length){toast('Cart is empty.');return}
+ const suffix=Math.floor(1000+Math.random()*9000);const t=totals();const pay=selectedPay();
+ lastOrder={order:'ORD-SUNY-2026-'+suffix,total:t.total,aid:t.aid,pay:pay,items:cart.map(c=>({course:c,enr:'ENR-'+suffix+'-'+c.code.replace(/[^A-Z0-9]/gi,'').slice(0,6).toUpperCase()}))};
+ lastOrder.items.forEach(function(it){const c=it.course;if(c.type==='credit'){enrolledCredit.push({code:c.code,name:c.name,format:c.format,credits:c.credits,term:'Spring 2027',status:'Registered — Spring 2027'})}else{enrolledNonCredit.push({code:c.code,name:c.name,format:c.format,ceu:c.ceu,when:c.when,status:'Registered — Continuing Ed'})}});
+ cart=[];renderCatalogs();
+ document.getElementById('confirmationBox').innerHTML='<p><span class="ref">Order '+lastOrder.order+'</span></p><p style="color:var(--muted)">Payment simulation: $0 actually charged · Total at review: <b>'+money(lastOrder.total)+'</b> (estimated aid '+money(lastOrder.aid)+' applied to for-credit only)</p><div class="table-wrap"><table aria-label="Confirmed enrollments"><thead><tr><th>Course</th><th>Type</th><th>Enrollment reference</th><th>Status</th></tr></thead><tbody>'+lastOrder.items.map(function(it){const c=it.course;return '<tr><td><b>'+c.code+'</b> — <button type="button" class="course-title-btn" data-action="course-detail" data-id="'+c.id+'">'+c.name+'</button><br><small style="color:var(--muted)">'+creditLine(c)+' · '+c.when+(c.type==='noncredit'?'<br>📧 Access/materials emailed within 1 business day; instructor will contact you. This portal is not an LMS — no course-player link.':'')+'</small></td><td>'+typeBadge(c)+'</td><td><code>'+it.enr+'</code></td><td><span class="badge green">'+(c.type==='credit'?'Registered — counts toward degree when completed':'Registered — Continuing Ed (no degree credit)')+'</span></td></tr>'}).join('')+'</tbody></table></div><p class="note">Simulated, stored only in this page session. Refresh resets the sample cart. Degree progress stays 82/120 completed — new for-credit credits count when completed; non-credit never counts.</p>';
+ setStep(5);toast('Enrollment confirmed (simulation): '+lastOrder.order);
+}
+function showView(id,updateHash){
+ if(!document.getElementById('view-'+id)) id='discover';
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+id));
+ document.querySelectorAll('[data-nav]').forEach(b=>b.setAttribute('aria-selected',b.dataset.nav===id?'true':'false'));
+ try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){try{window.scrollTo(0,0)}catch(_){}}
+ if(updateHash!==false){
+   try{history.replaceState(null,'','#'+id)}catch(e){try{location.hash=id}catch(_){}}
+ }
+ safeSet('hc-last-view',id);
+ try{const m=document.getElementById('main'); if(m&&m.focus) m.focus({preventScroll:true})}catch(e){}
+}
+function handleAction(el,ev){
+ const a=el.dataset.action;
+ if(a==='nav'){ ev.preventDefault(); const v=el.dataset.view; if(v==='checkout'){goCheckout()} else {showView(v)} }
+ else if(a==='checkout'){ goCheckout() }
+ else if(a==='campus'){ setCampus(el.dataset.campusVal) }
+ else if(a==='discover-type'){ setDiscoverType(el.dataset.typeVal) }
+ else if(a==='discover-category'){ setDiscoverCategory(el.dataset.cat) }
+ else if(a==='program-type'){ setProgramType(el.dataset.typeVal) }
+ else if(a==='browse-noncredit'){ showView('programs'); setProgramType('noncredit') }
+ else if(a==='open-modal'){ openModal(el.dataset.modal) }
+ else if(a==='close-modal'){ closeModal(el.dataset.modal) }
+ else if(a==='step'){ setStep(parseInt(el.dataset.stepVal,10)||1) }
+ else if(a==='complete-checkout'){ completeCheckout() }
+ else if(a==='add-cart'){ addToCart(el.dataset.id) }
+ else if(a==='remove-cart'){ removeFromCart(el.dataset.id) }
+ else if(a==='toast'){ toast(el.dataset.toast||'Done (prototype).') }
+ else if(a==='help-preview'){ ev.preventDefault(); toast('Help article preview — sample content in this prototype.') }
+ else if(a==='toggle-notifications'){ toggleNotifications() }
+ else if(a==='close-notifications'){ closeNotifications(true) }
+ else if(a==='mark-all-read'){ markAllRead() }
+ else if(a==='notif-open'){ openNotification(el.dataset.id) }
+ else if(a==='course-detail'){ openCourseDetail(el.dataset.id) }
+ else if(a==='program-detail'){ openProgramDetail(el.dataset.id) }
+ else if(a==='enrolled-detail'){ openEnrolledDetail(el.dataset.kind, el.dataset.code) }
+ else if(a==='detail-request-info'){ closeModal('courseModal'); openModal('requestModal') }
+ else if(a==='detail-browse-courses'){ closeModal('courseModal'); showView('programs'); setProgramType('all') }
+}
+let __lastFocus=null;
+function openModal(id){const d=document.getElementById(id);if(!d)return;try{__lastFocus=document.activeElement}catch(e){}try{if(!d.open)d.showModal()}catch(e){try{d.setAttribute('open','')}catch(_){}}try{const h=d.querySelector('h3,h2');if(h){if(!h.hasAttribute('tabindex'))h.setAttribute('tabindex','-1');h.focus({preventScroll:true})}}catch(e){}}
+function closeModal(id){const d=document.getElementById(id);if(!d)return;try{d.close()}catch(e){try{d.removeAttribute('open')}catch(_){}}}
+function prefToast(el){toast('Preference '+(el.checked?'on':'off')+' — saved per-campus in Marketing Cloud (prototype).')}
+let toastTimer;function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3600)}
+safeInit('delegation',()=>{
+ document.addEventListener('click',ev=>{
+   try{ if(ev.target&&ev.target.tagName==='DIALOG'){ ev.target.close(); return; } }catch(e){}
+   try{
+     const panel=document.getElementById('notifPanel');
+     const wrap=document.getElementById('notifWrap');
+     if(panel&&!panel.hidden&&wrap&&ev.target&&!wrap.contains(ev.target)){ closeNotifications(); }
+   }catch(e){}
+   const el=ev.target&&ev.target.closest?ev.target.closest('[data-action]'):null;
+   if(!el) return;
+   try{handleAction(el,ev)}catch(e){try{console.warn('[prototype] action failed',e)}catch(_){}}
+ });
+ document.addEventListener('input',ev=>{
+   const el=ev.target;
+   try{
+     if(el.id==='globalSearch'||el.id==='q'){ if(el.value){showView('discover')} filterPrograms() }
+   }catch(e){}
+ });
+ document.addEventListener('change',ev=>{
+   const el=ev.target;
+   try{
+     if(el.hasAttribute&&el.hasAttribute('data-campus-select')) setCampus(el.value);
+     else if(el.hasAttribute&&el.hasAttribute('data-term-select')) toast('Term changed to '+el.value+' (sample data)');
+     else if(el.hasAttribute&&el.hasAttribute('data-pay-radio')) togglePlan(el);
+     else if(el.hasAttribute&&el.hasAttribute('data-pref-toggle')) prefToast(el);
+   }catch(e){}
+ });
+ document.addEventListener('submit',ev=>{
+   const f=ev.target; if(!f||!f.id) return;
+   try{
+     if(f.id==='heroSearchForm'){ ev.preventDefault(); filterPrograms() }
+     else if(f.id==='detailsForm'){ ev.preventDefault(); const box=document.getElementById('attestBox'); if(box&&!box.checked){ toast('Please check the attestation to continue.'); box.focus(); return } setStep(3) }
+     else if(f.id==='paymentForm'){ ev.preventDefault(); buildReview(); setStep(4) }
+     else if(f.id==='requestForm'){ ev.preventDefault(); closeModal('requestModal'); toast('Thanks! Request-info preview complete — no data was sent.') }
+     else if(f.id==='caseForm'){ ev.preventDefault(); closeModal('caseModal'); toast('Case preview complete — no case was created.') }
+   }catch(e){}
+ });
+ document.addEventListener('keydown',ev=>{
+   try{ if(ev.key==='Escape'){ const panel=document.getElementById('notifPanel'); if(panel&&!panel.hidden) closeNotifications(true); } }catch(e){}
+ });
+ try{document.querySelectorAll('dialog').forEach(d=>{d.addEventListener('close',()=>{try{if(__lastFocus&&__lastFocus.focus)__lastFocus.focus({preventScroll:true})}catch(e){}})})}catch(e){}
+ window.addEventListener('hashchange',()=>{
+   try{const h=(location.hash||'').slice(1); if(h&&document.getElementById('view-'+h)) showView(h,false)}catch(e){}
+ });
+});
+safeInit('renderNotifications',()=>renderNotifications());
+safeInit('populateCampuses',()=>{document.querySelectorAll('[data-campus-select]').forEach(sel=>{SUNY_CAMPUSES.forEach(c=>{if([...sel.options].some(o=>o.value===c.name||o.textContent===c.name))return; const o=document.createElement('option');o.value=c.name;o.textContent=c.name+' — '+c.type;sel.appendChild(o)});sel.setAttribute('data-populated','64')});const co=document.getElementById('co-campus');if(co){SUNY_CAMPUSES.forEach(c=>{if(c.name!=='University at Albany'){const o=document.createElement('option');o.textContent=c.name;co.appendChild(o)}})}});
+safeInit('renderPrograms',()=>renderPrograms(programs));
+safeInit('renderCatalogs',()=>renderCatalogs());
+safeInit('initialRoute',()=>{
+ let h=''; try{h=(location.hash||'').slice(1)}catch(e){}
+ if(h&&document.getElementById('view-'+h)){ showView(h,false); if(h==='checkout') renderCheckoutCart(); }
+ else { const last=safeGet('hc-last-view'); /* do not trap user: default stays Discover unless hash present */ showView('discover',false); }
+});
+})();
+</script>
+</body>
+</html>

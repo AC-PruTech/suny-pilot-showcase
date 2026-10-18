@@ -1,0 +1,675 @@
+{
+  "generated": "2026-10-18",
+  "scrapeDate": "2026-10-18",
+  "sourceUrls": [
+    "https://www.suny.edu/",
+    "https://www.suny.edu/campuses/",
+    "https://www.suny.edu/about/campuses/",
+    "https://www.suny.edu/attend/find-a-suny-campus/campus-search/",
+    "https://www.suny.edu/contact/campus-directories/",
+    "https://www.suny.edu/media/suny/content-assets/documents/CampusNames_December-2022.pdf",
+    "https://www.suny.edu/media/suny/content-assets/documents/recruitment/SUNY-Campus-Guide-2026-27.pdf"
+  ],
+  "claim": {
+    "sunyPublicClaim": "64 campuses",
+    "homepageEvidence": "SUNY homepage (fetched 2026-10-18): 'SUNY's 64 colleges and universities' and stats block '64 Campuses'",
+    "campusesPageEvidence": "https://www.suny.edu/campuses/ headed 'Complete Campus List'; https://www.suny.edu/about/campuses/ shows 'All Campuses \u2014 64 Campuses'"
+  },
+  "verifiedCount": 64,
+  "countBySector": {
+    "Community College": 30,
+    "University Center / Doctoral Degree Granting Institution": 14,
+    "Technology College": 7,
+    "University College": 13
+  },
+  "discrepancy": "No discrepancy in the final count on https://www.suny.edu/campuses/ when Cornell's four statutory colleges are counted individually: 14 doctoral + 13 university colleges + 7 technology colleges + 30 community colleges = 64. A related page, https://www.suny.edu/contact/campus-directories/, groups the four Cornell colleges under one heading 'NYS Colleges at Cornell University', so a literal heading count there is 61 headings, which expands to 64 campuses. The SUNY Plattsburgh branch at Queensbury listed in the Dec 2022 Authorized Names PDF is a branch, not counted as a separate 65th campus. Direct curl to suny.edu from the box returned Cloudflare 403 'Just a moment'; pages above were successfully fetched via WebFetch on 2026-10-18 and are cited, not fabricated.",
+  "notes": [
+    "Campus names and order follow https://www.suny.edu/campuses/ (Complete Campus List, A-Z).",
+    "Sector follows SUNY Authorized Campus Names (Dec 2022) grouped as University Centers and Doctoral Degree Granting Institutions / University Colleges / Colleges of Technology / Community Colleges, corroborated by SUNY Campus Guide 2026-27 (14/13/7/30).",
+    "City: community-college locations are the parenthetical locations in the Authorized Campus Names PDF where given; other cities are the host/region location in the SUNY Campus Guide 2026-27 campus profiles. Where SUNY sources fetched did not list a separate official campus URL in text (most community colleges), officialCampusUrl is null rather than invented \u2014 use sunyDirectoryUrl.",
+    "Official campus URLs given only where the SUNY Campus Guide 2026-27 printed the campus domain (state-operated campuses).",
+    "Hartwell sample data is fictional: campus names here are SUNY public-directory names used only to model structure in the prototype."
+  ],
+  "campuses": [
+    {
+      "id": 1,
+      "campusCode": "suny-adirondack",
+      "name": "SUNY Adirondack",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Queensbury",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 2,
+      "campusCode": "university-at-albany",
+      "name": "University at Albany",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Albany",
+      "officialCampusUrl": "https://www.albany.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 3,
+      "campusCode": "alfred-state-college",
+      "name": "Alfred State College",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Alfred",
+      "officialCampusUrl": "https://www.alfredstate.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 4,
+      "campusCode": "nys-college-of-ceramics-at-alfred-university",
+      "name": "NYS College of Ceramics at Alfred University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Alfred",
+      "officialCampusUrl": "https://www.alfred.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 5,
+      "campusCode": "binghamton-university",
+      "name": "Binghamton University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Binghamton area",
+      "officialCampusUrl": "https://www.binghamton.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 6,
+      "campusCode": "suny-brockport",
+      "name": "SUNY Brockport",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Brockport",
+      "officialCampusUrl": "https://www.brockport.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 7,
+      "campusCode": "suny-broome-community-college",
+      "name": "SUNY Broome Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Binghamton",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 8,
+      "campusCode": "university-at-buffalo",
+      "name": "University at Buffalo",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Buffalo",
+      "officialCampusUrl": "https://www.buffalo.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 9,
+      "campusCode": "buffalo-state-university",
+      "name": "Buffalo State University",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Buffalo",
+      "officialCampusUrl": "https://www.buffalostate.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 10,
+      "campusCode": "suny-canton",
+      "name": "SUNY Canton",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Canton",
+      "officialCampusUrl": "https://www.canton.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 11,
+      "campusCode": "cayuga-community-college",
+      "name": "Cayuga Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Auburn",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 12,
+      "campusCode": "clinton-community-college",
+      "name": "Clinton Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Plattsburgh",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 13,
+      "campusCode": "suny-cobleskill-ag-and-tech",
+      "name": "SUNY Cobleskill Ag & Tech",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Cobleskill",
+      "officialCampusUrl": "https://www.cobleskill.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 14,
+      "campusCode": "columbia-greene-community-college",
+      "name": "Columbia-Greene Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Hudson",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 15,
+      "campusCode": "nys-college-of-agriculture-and-life-sciences-at-cornell-university",
+      "name": "NYS College of Agriculture & Life Sciences at Cornell University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Ithaca (Cornell University)",
+      "officialCampusUrl": "https://www.cornell.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 16,
+      "campusCode": "nys-college-of-human-ecology-at-cornell-university",
+      "name": "NYS College of Human Ecology at Cornell University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Ithaca (Cornell University)",
+      "officialCampusUrl": "https://www.cornell.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 17,
+      "campusCode": "nys-school-of-industrial-and-labor-relations-at-cornell-university",
+      "name": "NYS School of Industrial & Labor Relations at Cornell University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Ithaca (Cornell University)",
+      "officialCampusUrl": "https://www.cornell.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 18,
+      "campusCode": "nys-college-of-veterinary-medicine-at-cornell-university",
+      "name": "NYS College of Veterinary Medicine at Cornell University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Ithaca (Cornell University)",
+      "officialCampusUrl": "https://www.cornell.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 19,
+      "campusCode": "corning-community-college",
+      "name": "Corning Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Corning",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 20,
+      "campusCode": "suny-cortland",
+      "name": "SUNY Cortland",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Cortland",
+      "officialCampusUrl": "https://www.cortland.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 21,
+      "campusCode": "suny-delhi",
+      "name": "SUNY Delhi",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Delhi",
+      "officialCampusUrl": "https://www.delhi.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 22,
+      "campusCode": "suny-downstate-health-sciences-university",
+      "name": "SUNY Downstate Health Sciences University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Brooklyn, New York City",
+      "officialCampusUrl": "https://www.downstate.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 23,
+      "campusCode": "dutchess-community-college",
+      "name": "Dutchess Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Poughkeepsie",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 24,
+      "campusCode": "suny-empire-state-university",
+      "name": "SUNY Empire State University",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Primarily online / statewide",
+      "officialCampusUrl": "https://www.sunyempire.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 25,
+      "campusCode": "suny-college-of-environmental-science-and-forestry",
+      "name": "SUNY College of Environmental Science and Forestry (ESF)",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Syracuse",
+      "officialCampusUrl": "https://www.esf.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 26,
+      "campusCode": "erie-community-college",
+      "name": "Erie Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Williamsville, Buffalo and Orchard Park",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 27,
+      "campusCode": "farmingdale-state-college",
+      "name": "Farmingdale State College",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Farmingdale",
+      "officialCampusUrl": "https://www.farmingdale.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 28,
+      "campusCode": "fashion-institute-of-technology",
+      "name": "Fashion Institute of Technology (FIT)",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "New York City",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 29,
+      "campusCode": "finger-lakes-community-college",
+      "name": "Finger Lakes Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Canandaigua",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 30,
+      "campusCode": "suny-fredonia",
+      "name": "SUNY Fredonia",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Fredonia",
+      "officialCampusUrl": "https://www.fredonia.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 31,
+      "campusCode": "fulton-montgomery-community-college",
+      "name": "Fulton-Montgomery Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Johnstown",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 32,
+      "campusCode": "genesee-community-college",
+      "name": "Genesee Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Batavia",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 33,
+      "campusCode": "suny-geneseo",
+      "name": "SUNY Geneseo",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Geneseo",
+      "officialCampusUrl": "https://www.geneseo.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 34,
+      "campusCode": "herkimer-county-community-college",
+      "name": "Herkimer County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Herkimer",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 35,
+      "campusCode": "hudson-valley-community-college",
+      "name": "Hudson Valley Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Troy",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 36,
+      "campusCode": "jamestown-community-college",
+      "name": "Jamestown Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Jamestown",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 37,
+      "campusCode": "jefferson-community-college",
+      "name": "Jefferson Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Watertown",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 38,
+      "campusCode": "maritime-college",
+      "name": "Maritime College",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Bronx, New York City (Throggs Neck)",
+      "officialCampusUrl": "https://www.sunymaritime.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 39,
+      "campusCode": "mohawk-valley-community-college",
+      "name": "Mohawk Valley Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Utica",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 40,
+      "campusCode": "monroe-community-college",
+      "name": "Monroe Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Rochester",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 41,
+      "campusCode": "suny-morrisville",
+      "name": "SUNY Morrisville",
+      "sector": "Technology College",
+      "type": "Technology College",
+      "city": "Morrisville",
+      "officialCampusUrl": "https://www.morrisville.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 42,
+      "campusCode": "nassau-community-college",
+      "name": "Nassau Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Garden City",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 43,
+      "campusCode": "suny-new-paltz",
+      "name": "SUNY New Paltz",
+      "sector": "University College",
+      "type": "University College",
+      "city": "New Paltz",
+      "officialCampusUrl": "https://www.newpaltz.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 44,
+      "campusCode": "suny-niagara-community-college",
+      "name": "SUNY Niagara Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Sanborn",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 45,
+      "campusCode": "north-country-community-college",
+      "name": "North Country Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Saranac Lake, Malone and Ticonderoga",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 46,
+      "campusCode": "suny-old-westbury",
+      "name": "SUNY Old Westbury",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Old Westbury",
+      "officialCampusUrl": "https://www.oldwestbury.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 47,
+      "campusCode": "suny-oneonta",
+      "name": "SUNY Oneonta",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Oneonta",
+      "officialCampusUrl": "https://www.oneonta.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 48,
+      "campusCode": "onondaga-community-college",
+      "name": "Onondaga Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Syracuse",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 49,
+      "campusCode": "college-of-optometry",
+      "name": "College of Optometry",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "New York City",
+      "officialCampusUrl": "https://www.sunyopt.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 50,
+      "campusCode": "orange-county-community-college",
+      "name": "Orange County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Middletown",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 51,
+      "campusCode": "suny-oswego",
+      "name": "SUNY Oswego",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Oswego",
+      "officialCampusUrl": "https://www.oswego.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 52,
+      "campusCode": "suny-plattsburgh",
+      "name": "SUNY Plattsburgh",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Plattsburgh",
+      "officialCampusUrl": "https://www.plattsburgh.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 53,
+      "campusCode": "suny-potsdam",
+      "name": "SUNY Potsdam",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Potsdam",
+      "officialCampusUrl": "https://www.potsdam.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 54,
+      "campusCode": "purchase-college",
+      "name": "Purchase College",
+      "sector": "University College",
+      "type": "University College",
+      "city": "Purchase",
+      "officialCampusUrl": "https://www.purchase.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 55,
+      "campusCode": "rockland-community-college",
+      "name": "Rockland Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Suffern",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 56,
+      "campusCode": "suny-schenectady-county-community-college",
+      "name": "SUNY Schenectady County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Schenectady",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 57,
+      "campusCode": "stony-brook-university",
+      "name": "Stony Brook University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Stony Brook",
+      "officialCampusUrl": "https://www.stonybrook.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 58,
+      "campusCode": "suffolk-county-community-college",
+      "name": "Suffolk County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Selden, Riverhead and Brentwood",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 59,
+      "campusCode": "sullivan-county-community-college",
+      "name": "Sullivan County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Loch Sheldrake",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 60,
+      "campusCode": "suny-polytechnic-institute",
+      "name": "SUNY Polytechnic Institute",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Utica",
+      "officialCampusUrl": "https://www.sunypoly.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 61,
+      "campusCode": "tompkins-cortland-community-college",
+      "name": "Tompkins Cortland Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Dryden",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 62,
+      "campusCode": "ulster-county-community-college",
+      "name": "Ulster County Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Stone Ridge",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 63,
+      "campusCode": "upstate-medical-university",
+      "name": "Upstate Medical University",
+      "sector": "University Center / Doctoral Degree Granting Institution",
+      "type": "University Center / Doctoral Degree Granting Institution",
+      "city": "Syracuse",
+      "officialCampusUrl": "https://www.upstate.edu",
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    },
+    {
+      "id": 64,
+      "campusCode": "westchester-community-college",
+      "name": "Westchester Community College",
+      "sector": "Community College",
+      "type": "Community College",
+      "city": "Valhalla",
+      "officialCampusUrl": null,
+      "sunyDirectoryUrl": "https://www.suny.edu/campuses/"
+    }
+  ]
+}

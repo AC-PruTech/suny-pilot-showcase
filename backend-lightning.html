@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Education Cloud Console — SUNY Pilot (Backend Prototype)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.25.2/styles/salesforce-lightning-design-system.min.css">
+<style>
+:root{--navy:#032d60;--blue:#0176d3;--blue2:#0b5cab;--border:#dddbda;--muted:#5c5c5c;--bg:#f3f2f2;--card:#fff;--success:#2e844a;--warn:#93360b;--warnbg:#fef1e6;--gold:#f5c542}
+*{box-sizing:border-box}
+/* Scroll guard: the document itself (not a fixed-height wrapper) is the scroller. Explicitly overrides any embedding viewer/iframe or CDN stylesheet (e.g. SLDS) that constrains html/body with height:100%/overflow:hidden — which renders a scrollbar yet leaves content below the fold unreachable. Sticky header remains sticky; no overlay intercepts wheel/touch over content. */
+html{height:auto!important;min-height:100%;overflow-y:auto!important}
+body{height:auto!important;min-height:100vh;overflow-y:visible!important;overflow-x:clip;position:static;touch-action:auto;-webkit-overflow-scrolling:touch}
+body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,"Salesforce Sans",Arial,sans-serif;background:var(--bg);color:#181818;font-size:14px}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.skip{position:absolute;left:-9999px;background:var(--navy);color:#fff;padding:8px 14px;z-index:99}.skip:focus{left:0}
+/* Global Lightning header */
+.lx-header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:60}
+.lx-header-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:0 16px;height:56px}
+.waffle{width:36px;height:36px;border:0;background:none;cursor:pointer;font-size:18px;color:#444;border-radius:6px}.waffle:hover{background:#f3f2f2}
+.app-name{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--navy);white-space:nowrap}
+.app-icon{width:34px;height:34px;background:var(--blue);border-radius:8px;display:grid;place-items:center;color:#fff;font-size:17px}
+.global-search{flex:1;max-width:520px}.global-search input{width:100%;padding:9px 12px;border:1px solid #c9c7c5;border-radius:6px;background:#fafaf9}
+.lx-nav{background:var(--navy)}
+.lx-nav-in{max-width:1440px;margin:0 auto;padding:0 16px;display:flex;gap:2px;overflow-x:auto}
+.lx-nav button{background:none;border:0;color:#cfe3f7;padding:11px 14px;cursor:pointer;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent}
+.lx-nav button[aria-selected="true"]{color:#fff;border-bottom-color:#fff;background:rgba(255,255,255,.1)}
+.utils{margin-left:auto;display:flex;gap:4px;align-items:center}
+.icon-btn{width:36px;height:36px;border:0;background:none;border-radius:50%;cursor:pointer;position:relative;font-size:16px}
+.dot{position:absolute;top:2px;right:2px;background:#ba0517;color:#fff;font-size:9px;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;font-weight:700}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px;border:0;cursor:pointer}
+.sample{background:#fff7e6;border-bottom:1px solid #f5d48e;color:#6b4e00;text-align:center;font-size:12px;padding:6px 12px}
+.wrap{max-width:1440px;margin:0 auto;padding:18px 16px 48px}
+html:not(.js-enabled) .view{display:block;margin-bottom:28px}
+html.js-enabled .view{display:none} html.js-enabled .view.active{display:block}
+/* Record header / highlights */
+.rec-head{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px;box-shadow:0 2px 2px rgba(0,0,0,.06)}
+.rec-top{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.obj-icon{width:48px;height:48px;border-radius:8px;display:grid;place-items:center;font-size:22px;color:#fff;flex-shrink:0;background:#7f4de2}
+.obj-icon.blue{background:#0176d3}.obj-icon.green{background:#2e844a}.obj-icon.orange{background:#dd7a01}.obj-icon.teal{background:#0b827c}.obj-icon.pink{background:#c2397f}.obj-icon.navy{background:#032d60}
+.obj-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.rec-title{font-size:22px;color:var(--navy);margin:2px 0;font-weight:700}
+.keyfields{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.kf span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;font-weight:700}.kf b{color:#181818}
+.btn{display:inline-flex;padding:8px 14px;border-radius:6px;border:1px solid #c9c7c5;background:#fff;cursor:pointer;font-weight:600;font:inherit;align-items:center;gap:6px}
+.btn-brand{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-brand:hover{background:#014486}
+.btn-sm{padding:5px 10px;font-size:13px}
+.layout3{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px;align-items:start}
+.layout2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;align-items:start}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.card h3{margin:0 0 10px;color:var(--navy);font-size:16px}
+.card h4{margin:14px 0 6px;color:var(--navy)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.badge{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:#eef4ff;color:var(--navy);border:1px solid #d8e6fe}
+.badge.green{background:#ecfdf3;color:var(--success);border-color:#a6e8bb}.badge.amber{background:var(--warnbg);color:var(--warn);border-color:#fec98a}.badge.grey{background:#f3f2f2;color:#444;border-color:#ddd}.badge.purple{background:#f3efff;color:#5a2ea6;border-color:#d8cfff}
+.alert{border:1px solid #fe9339;background:var(--warnbg);color:#5f2a00;border-radius:8px;padding:12px 14px;margin-top:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:2px solid var(--border);background:#fafaf9}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr[data-action]{cursor:pointer}tbody tr[data-action]:hover td{background:#f3f8ff}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:#fff}
+.link-btn{background:none;border:0;color:var(--blue);cursor:pointer;font:inherit;font-weight:600;padding:0;text-align:left}.link-btn:hover{text-decoration:underline}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.field{padding:9px 0;border-bottom:1px solid #f0efee}.field span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;font-weight:700}
+.progress{height:10px;background:#e9ecef;border-radius:6px;overflow:hidden}.progress i{display:block;height:100%;background:var(--blue)}
+/* Tabs */
+.rtabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin:16px 0 0;overflow-x:auto}
+.rtabs button{background:none;border:0;padding:10px 16px;cursor:pointer;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;font:inherit}
+.rtabs button[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}
+html:not(.js-enabled) .rtab-panel{display:block}
+html.js-enabled .rtab-panel{display:none} html.js-enabled .rtab-panel.active{display:block}
+/* Path */
+.path{display:flex;list-style:none;padding:0;margin:0;overflow-x:auto}
+.path li{flex:1;min-width:140px}
+.path button{width:100%;padding:11px 8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:700;color:var(--muted);font:inherit;font-size:13px}
+.path li:first-child button{border-radius:8px 0 0 8px}.path li:last-child button{border-radius:0 8px 8px 0}
+.path li.done button{background:#e6f4ea;color:var(--success)}
+.path li.current button{background:var(--blue);color:#fff;border-color:var(--blue)}
+.checklist{list-style:none;padding:0;margin:0}.checklist li{padding:9px 0;border-bottom:1px solid #f0efee;display:flex;gap:10px}.checklist li:last-child{border:0}
+/* Timeline/feed */
+.feed{list-style:none;padding:0;margin:0}.feed li{padding:12px 0 12px 18px;border-left:2px solid #d8e6fe;position:relative}
+.feed li:before{content:"";position:absolute;left:-6px;top:16px;width:10px;height:10px;border-radius:50%;background:var(--blue)}
+.feed small{color:var(--muted)}
+.persona-card{cursor:pointer;text-align:left;width:100%;font:inherit}
+.persona-card:hover{border-color:var(--blue);box-shadow:0 4px 14px rgba(1,118,211,.18)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.bre-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:grid;place-items:center}
+.bre-modal{background:#fff;border-radius:10px;padding:20px;max-width:480px;width:92%;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.bre-modal h3{margin:0 0 10px;color:var(--navy)}
+.queue-filter-note{font-size:12px;color:var(--muted)}
+.toast{position:fixed;right:18px;bottom:18px;background:var(--navy);color:#fff;padding:13px 16px;border-radius:8px;display:none;pointer-events:none;z-index:90;max-width:360px;box-shadow:0 8px 24px rgba(0,0,0,.3)}.toast.show{display:block;pointer-events:auto}
+.note{font-size:12px;color:var(--muted);background:#fafaf9;border:1px dashed #c9c7c5;border-radius:6px;padding:9px 11px;margin-top:10px}
+footer{background:var(--navy);color:#cfe3f7;font-size:12px}footer div{max-width:1440px;margin:0 auto;padding:20px 16px}
+@media(max-width:960px){.keyfields{grid-template-columns:repeat(2,1fr)}.layout3,.layout2,.grid3,.grid2{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.global-search{display:none}}
+</style>
+</head>
+<body>
+<div style="background:#0a1f33;padding:7px 16px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px"><a href="site.html" style="color:#f5c542;font-weight:700;text-decoration:none">← Showcase home</a> <span style="color:#9fb3c8">· SUNY Pilot — Build Showcase</span></div>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="lx-header"><div class="lx-header-in">
+  <button class="waffle" aria-label="App Launcher (preview)" data-action="toast" data-toast="App Launcher preview — Education Cloud Console apps listed in the navigation below.">⠿</button>
+  <div class="app-name"><span class="app-icon" aria-hidden="true">🎓</span><span>Education Cloud Console</span></div>
+  <div class="global-search" role="search"><label class="sr" for="gsearch">Search Salesforce</label><input id="gsearch" type="search" placeholder="Search Learners, Applications, Cases, Orders…"></div>
+  <nav class="utils" aria-label="Global actions">
+    <button class="icon-btn" aria-label="Notifications" data-action="nav" data-view="learner">🔔<span class="dot">3</span></button>
+    <button class="icon-btn" aria-label="Help" data-action="nav" data-view="case">?</button>
+    <button class="avatar" aria-label="Staff user: M. Rivera" data-action="nav" data-view="home">MR</button>
+  </nav>
+</div>
+<nav class="lx-nav" aria-label="Console apps"><div class="lx-nav-in" role="tablist" aria-label="Backend views">
+  <button role="tab" aria-selected="true" data-nav="home" data-action="nav" data-view="home">Home / Workspace</button>
+  <button role="tab" aria-selected="false" data-nav="learner" data-action="nav" data-view="learner">Learner 360</button>
+  <button role="tab" aria-selected="false" data-nav="application" data-action="nav" data-view="application">Application</button>
+  <button role="tab" aria-selected="false" data-nav="program" data-action="nav" data-view="program">Program Enrollment</button>
+  <button role="tab" aria-selected="false" data-nav="case" data-action="nav" data-view="case">Case</button>
+  <button role="tab" aria-selected="false" data-nav="cecourse" data-action="nav" data-view="cecourse">Product2</button>
+  <button role="tab" aria-selected="false" data-nav="aid" data-action="nav" data-view="aid">Financial Aid Award</button>
+  <button role="tab" aria-selected="false" data-nav="psspayment" data-action="nav" data-view="psspayment">PSS State Payment</button>
+  <button role="tab" aria-selected="false" data-nav="order" data-action="nav" data-view="order">Order</button>
+  <button role="tab" aria-selected="false" data-nav="bre" data-action="nav" data-view="bre">Rules Engine (BRE)</button>
+</div></nav>
+</header>
+<div class="sample" role="note">Backend Lightning prototype — SUNY Pilot sample data only (not official SUNY; learners/prices fictional) · STANDARD-FIRST: Person Account/Contact, Account RT Campus (64 SUNY)/Employer, Product2 (NonCredit vs ForCredit), Order/OrderItem=Enrollment, Opportunity=application, PSS payment generic RTs Employer_Sponsored/Degree_Financial_Aid/State_Workforce_Funding (confirm API in-org) · Only customs justified: CE Certificate, Campus-Course Availability, Session/seats · Single custom LWR community (one site) · Not connected to a Salesforce org · NOT an LMS</div>
+<noscript><div class="sample">JavaScript is off or blocked — all record pages are shown stacked below so nothing is hidden. Open this file directly in a browser for tabs and navigation.</div></noscript>
+
+<main id="main" class="wrap" tabindex="-1">
+
+<!-- ============ HOME / WORKSPACE ============ -->
+<section class="view active" id="view-home" aria-labelledby="home-h">
+  <div class="rec-head"><div class="rec-top"><span class="obj-icon navy" aria-hidden="true">⌂</span><div><div class="obj-label">Education Cloud Console · Home</div><h1 class="rec-title" id="home-h" style="font-size:22px;margin:2px 0">Good morning — choose your workspace</h1><p style="color:var(--muted);margin:0">Queues and worklists by persona. Select a persona card or any row to open the record.</p></div></div></div>
+
+  <div class="grid3" style="margin-top:14px;grid-template-columns:repeat(4,1fr)" role="group" aria-label="Persona workspaces">
+    <button class="card persona-card" data-action="nav" data-view="application"><span class="badge">Enrollment Specialist</span><h3 style="margin-top:10px">Applications &amp; Conversion</h3><p style="color:var(--muted)">5 applications in review · 2 ready for admit decision · Campus BU: Online / North</p><b style="color:var(--blue)">Open Application workspace →</b></button>
+    <button class="card persona-card" data-action="nav" data-view="program"><span class="badge purple">Registrar</span><h3 style="margin-top:10px">Enrollments, Holds &amp; CE Records</h3><p style="color:var(--muted)">12 active program enrollments · 3 advising holds · Spring 2027 term setup</p><b style="color:var(--blue)">Open Registrar workspace →</b></button>
+    <button class="card persona-card" data-action="nav" data-view="cecourse"><span class="badge amber">Continuing Education Ops</span><h3 style="margin-top:10px">CE &amp; Workforce Operations</h3><p style="color:var(--muted)">38 CE enrollments today · CNA cohort filling (20/24) · 3 employer-sponsored cohorts</p><b style="color:var(--blue)">Open Product2 workspace →</b></button>
+    <button class="card persona-card" data-action="nav" data-view="case"><span class="badge green">Education Advisor</span><h3 style="margin-top:10px">Advising &amp; Support</h3><p style="color:var(--muted)">4 appointments today · 6 open cases · Advisor: Maya Rivera</p><b style="color:var(--blue)">Open Advising workspace →</b></button>
+  </div>
+
+  <article class="card" style="margin-top:14px"><h3>⭐ Non-Credit / Continuing Education Queue — CE Ops</h3>
+    <div class="table-wrap"><table aria-label="Continuing Education queue"><thead><tr><th>Queue Item</th><th>Course / Cohort</th><th>Detail</th><th>Status</th></tr></thead><tbody>
+    <tr data-action="nav" data-view="cecourse" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="cecourse">CE enrollments today (38)</button></td><td>CE PM-101 Project Mgmt + CE IT-150 Help Desk</td><td>Start-anytime registrations</td><td><span class="badge green">Flowing</span></td></tr>
+    <tr data-action="nav" data-view="cecourse" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="cecourse">Cohort roster filling — CE CNA-201</button></td><td>Certified Nursing Assistant Prep · West Campus</td><td>20 / 24 seats filled · Feb 2 cohort</td><td><span class="badge amber">Filling fast</span></td></tr>
+    <tr data-action="nav" data-view="cecourse" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="cecourse">Waitlist (4) — CE HVAC-220</button></td><td>HVAC Fundamentals · North Campus trades lab</td><td>12 / 16 seats · waitlist open</td><td><span class="badge amber">Waitlist</span></td></tr>
+    <tr data-action="nav" data-view="psspayment" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="psspayment">Employer-sponsored registrations (6)</button></td><td>Workforce Partner (sample Account) — CE seats</td><td>Paid by employer via PSS state payment · RecordType Employer_Sponsored · $0 learner due</td><td><span class="badge">Sponsored · PSS</span></td></tr>
+    <tr data-action="nav" data-view="cecourse" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="cecourse">Certificates to issue (11)</button></td><td>CE completions — Oct</td><td>Certificate_Status__c = Ready to Issue</td><td><span class="badge purple">Action needed</span></td></tr>
+    </tbody></table></div><p class="note">Non-credit still never counts toward degree credit and is <b>not</b> degree financial aid. Funding/payment <b>is</b> tracked in PSS: degree aid uses RecordType <b>Degree_Financial_Aid</b>, employer-paid CE uses <b>Employer_Sponsored</b>, and state workforce funding uses <b>State_Workforce_Funding</b> — different PSS record types, different reporting. Confirm exact PSS object/API names in-org.</p></article>
+
+  <div class="layout2">
+    <article class="card"><h3>My Applications — Enrollment Specialist queue</h3>
+      <div class="table-wrap"><table aria-label="Applications queue"><thead><tr><th>Application</th><th>Applicant</th><th>Stage</th><th>Campus BU</th><th>Next step</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="application" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="application">APP-2027-0184</button></td><td>Sample Learner (Pilot)</td><td><span class="badge amber">Documents Review</span></td><td>North Campus</td><td>Verify transcript</td></tr>
+      <tr data-action="nav" data-view="application" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="application">APP-2027-0191</button></td><td>Jordan Lee (sample)</td><td><span class="badge">Applied</span></td><td>Online</td><td>Request essay</td></tr>
+      <tr data-action="nav" data-view="application" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="application">APP-2027-0177</button></td><td>Priya Nair (sample)</td><td><span class="badge green">Admit Decision</span></td><td>Downtown Campus</td><td>Send decision</td></tr>
+      </tbody></table></div></article>
+
+    <article class="card"><h3>Today — Education Advisor (Maya Rivera)</h3>
+      <div class="table-wrap"><table aria-label="Advisor today"><thead><tr><th>Time</th><th>Appointment / Case</th><th>Learner</th><th>Type</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="learner" tabindex="0"><td>10:30 AM</td><td><button class="link-btn" data-action="nav" data-view="learner">Degree plan review</button></td><td>Sample Learner (Pilot)</td><td>Advising</td></tr>
+      <tr data-action="nav" data-view="case" tabindex="0"><td>Case</td><td><button class="link-btn" data-action="nav" data-view="case">#004821 Advising hold question</button></td><td>Sample Learner (Pilot)</td><td><span class="badge amber">Working</span></td></tr>
+      <tr data-action="nav" data-view="learner" tabindex="0"><td>2:00 PM</td><td><button class="link-btn" data-action="nav" data-view="learner">Spring enrollment check-in</button></td><td>Sample Learner (Pilot)</td><td>Advising</td></tr>
+      </tbody></table></div></article>
+  </div>
+
+  <div class="layout2">
+    <article class="card"><h3>Registrar — Holds &amp; enrollment exceptions</h3>
+      <div class="table-wrap"><table aria-label="Registrar queue"><thead><tr><th>Learner</th><th>Issue</th><th>Status</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="learner" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="learner">Sample Learner (Pilot) · 884-1027</button></td><td>Advising hold — degree plan review required</td><td><span class="badge amber">Hold</span></td></tr>
+      <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">PE-2026-CS-8841 (B.S. CS)</button></td><td>Prerequisite check: CS 420 needs CS 335 ✓</td><td><span class="badge green">Ready</span></td></tr>
+      </tbody></table></div></article>
+
+    <article class="card"><h3>Finance &amp; Aid — Needs attention</h3>
+      <div class="table-wrap"><table aria-label="Finance queue"><thead><tr><th>Record</th><th>Learner</th><th>Status</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="aid" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="aid">State Opportunity Grant</button></td><td>Sample Learner (Pilot)</td><td><span class="badge green">Fall disbursed</span></td></tr>
+      <tr data-action="nav" data-view="order" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="order">ORD-SUNY-2026-4403</button></td><td>Sample Learner (Pilot)</td><td><span class="badge amber">Payment plan active</span></td></tr>
+      <tr data-action="nav" data-view="psspayment" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="psspayment">PSS-PAY-2026-1049 · Employer_Sponsored</button></td><td>Jordan Lee (sample) · Workforce Partner</td><td><span class="badge amber">Invoiced</span></td></tr>
+      </tbody></table></div></article>
+  </div>
+  <p class="note">Persona visibility in this prototype is illustrative. Enforce with profiles/permission sets in-org — see lightning-layout-spec.md.</p>
+</section>
+
+<!-- ============ 1. LEARNER 360 ============ -->
+<section class="view" id="view-learner" aria-labelledby="learner-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top">
+    <span class="obj-icon" aria-hidden="true">👤</span>
+    <div style="flex:1"><div class="obj-label">Person Account / Contact — Learner 360</div><h2 class="rec-title" id="learner-h">Sample Learner (Pilot)</h2><span class="badge green">Active Learner</span> <span class="badge">B.S. Computer Science</span> <span class="badge purple">Online + North Campus BU</span></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-sm" data-action="toast" data-toast="Edit preview — no record is changed in this prototype.">Edit</button><button class="btn btn-brand btn-sm" data-action="nav" data-view="case">New Case</button></div>
+  </div>
+  <div class="keyfields">
+    <div class="kf"><span>Student ID</span><b>884-1027</b></div>
+    <div class="kf"><span>Program</span><b>B.S. Computer Science</b></div>
+    <div class="kf"><span>GPA / Standing</span><b>3.62 · Good Standing</b></div>
+    <div class="kf"><span>Advisor</span><b>Maya Rivera</b></div>
+    <div class="kf"><span>Expected Graduation</span><b>May 2027</b></div>
+    <div class="kf"><span>Campus / Business Unit</span><b>North Campus</b></div>
+    <div class="kf"><span>Degree Progress</span><b>82 / 120 credits · 68%</b></div>
+    <div class="kf"><span>Account Owner</span><b>M. Rivera (Advisor)</b></div>
+  </div></div>
+
+  <div class="alert" role="alert">⚠️ <b>Advising Hold (HOLD-ADV-01)</b> — Degree plan review required before Spring 2027 enrollment. Owner: Maya Rivera · <button class="link-btn" data-action="nav" data-view="case">Open Case #004821 →</button> <button class="link-btn" data-action="toast" data-toast="Hold release preview — Registrar/Advising would clear this in-org after the advising meeting.">Preview hold release</button></div>
+
+  <div class="rtabs" role="tablist" aria-label="Learner tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="learner" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="learner" data-tab="related">Related</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="learner" data-tab="activity">Activity</button>
+  </div>
+
+  <div class="rtab-panel active" id="tab-learner-details">
+    <div class="layout3"><article class="card"><h3>Learner Information — Dynamic Forms (sample)</h3><div class="fields">
+      <div class="field"><span>Full Name</span>Sample Learner (Pilot)</div><div class="field"><span>Student_ID__c</span>884-1027</div>
+      <div class="field"><span>Email</span>sample.learner@example.edu (sample)</div><div class="field"><span>Learner_Type__c</span>Student (Prospect → Learner → Alumni)</div>
+      <div class="field"><span>Primary_Program__c</span>B.S. Computer Science</div><div class="field"><span>Campus_Business_Unit__c</span>North Campus</div>
+      <div class="field"><span>GPA__c</span>3.62</div><div class="field"><span>Academic_Standing__c</span>Good Standing</div>
+      <div class="field"><span>Credits_Completed__c</span>82</div><div class="field"><span>Credits_Required__c</span>120</div>
+      <div class="field"><span>Advisor__c (Lookup)</span>Maya Rivera</div><div class="field"><span>Community_User__c</span>Active — Learner Portal (no duplicate person)</div>
+    </div></article>
+    <aside><article class="card"><h3>Degree Progress</h3><b>82 of 120 credits · 68%</b><div class="progress" role="img" aria-label="Degree progress 68 percent"><i style="width:68%"></i></div><p style="color:var(--muted);font-size:13px">For-credit only. Non-credit / CEU courses never increment this component.</p><ul style="padding-left:18px;color:var(--muted);font-size:13px"><li>Core 24/30</li><li>Major CS 36/48</li><li>Electives 22/42</li></ul></article>
+    <article class="card" style="margin-top:14px"><h3>Advisor Assignment</h3><p><b>Maya Rivera</b> — Education Advisor<br><span style="color:var(--muted)">North Campus · Caseload: B.S. CS</span></p><button class="btn btn-sm" data-action="nav" data-view="case">Book / View Appointments</button></article></aside></div>
+  </div>
+
+  <div class="rtab-panel" id="tab-learner-related">
+    <article class="card" style="margin-bottom:14px;border-top:4px solid var(--gold)"><h3>⭐ Continuing Education Summary — Non-Credit</h3><p><b>CEUs earned:</b> 0.6 (Excel for Professionals, Completed) · <b>CEUs in progress:</b> 1.2 (CE PM-101) · <b>Certificates:</b> 1 earned, 1 in progress · <b>Next session:</b> CE PM-101 — start anytime</p><p style="color:var(--muted);font-size:13px">CE enrollments never count toward the 82/120 degree credits and are not degree financial aid.</p><button class="btn btn-sm" data-action="nav" data-view="cecourse">Open Product2 Record →</button> <button class="btn btn-sm" data-action="nav" data-view="program">View OrderItem Enrollments</button> <button class="btn btn-sm" data-action="nav" data-view="psspayment">PSS Employer_Sponsored payment record →</button></article>
+    <article class="card" style="margin-bottom:14px" id="learner-funding-summary"><h3>Funding Summary — PSS by Record Type (both in PSS)</h3><div class="table-wrap"><table aria-label="Learner funding summary by PSS record type"><thead><tr><th>Funding kind</th><th>System / Record Type</th><th>Sample record</th><th>Degree credit / aid?</th></tr></thead><tbody><tr data-action="nav" data-view="aid" tabindex="0"><td><b>Degree aid</b> — State Opportunity Grant $3,200</td><td>PSS · <b>RecordType = Degree_Financial_Aid</b></td><td><button class="link-btn" data-action="nav" data-view="aid">AWD-SOG-2026-118 →</button></td><td>For-credit only</td></tr><tr data-action="nav" data-view="psspayment" tabindex="0"><td><b>Employer-paid CE</b> — employer pays SUNY Pilot for sponsored non-credit seats (Sample Learner (Pilot): none employer-paid on the $1,564 order; the CE PM-101 line is learner-paid)</td><td>PSS state payment · <b>RecordType = Employer_Sponsored</b></td><td><button class="link-btn" data-action="nav" data-view="psspayment">PSS-PAY-2026-1049 (sponsored-learner example) →</button></td><td><span class="badge purple">Non-Credit</span> No degree credit · Not degree aid</td></tr><tr data-action="nav" data-view="psspayment" tabindex="0"><td><b>State workforce funding</b> (WIOA-style, sample)</td><td>PSS state payment · <b>RecordType = State_Workforce_Funding</b></td><td><button class="link-btn" data-action="nav" data-view="psspayment">View PSS payments by record type →</button></td><td>Non-credit · Not degree aid</td></tr></tbody></table></div><p class="note">Standard-object hybrid: Employer = standard <b>Account</b>, Learner = <b>Contact / Person Account</b>, sponsored seats/orders use standard <b>Order / OrderItem</b> (and Invoice if used in-org); PSS holds the state payment/funding record linked to Account + OrderItem Enrollment + Order. Confirm exact PSS object/API names in-org.</p></article>
+    <article class="card" id="learner-bre-summary" style="margin-bottom:14px;border-top:4px solid var(--blue)"><h3>BRE Summary — Eligibility &amp; Funding (read-only)</h3>
+      <p><b>Eligibility:</b> For-credit degree eligible (CS 410) · Non-credit CE does not count toward degree credit. <b>Funding outcome:</b> Degree aid via PSS <b>Degree_Financial_Aid</b> (AWD-SOG-2026-118); employer-paid CE, where present, via <b>Employer_Sponsored</b> at $0 learner due.</p>
+      <p style="color:var(--muted);font-size:13px"><b>Plain-language explanation:</b> Your degree courses can use degree aid. Your non-credit continuing-education courses are paid separately (by you, an employer, or workforce funding) and do not change your degree progress. <span class="badge">SUNY_CE_Eligibility v1.0-pilot</span></p>
+      <div id="learnerBreHoldControls"><p class="note">Payment-hold controls are shown here only for personas permitted to act on holds. Education Advisor view hides this section entirely — advisors explain the outcome, they do not release holds.</p><button class="btn btn-sm" data-action="bre-release-hold" data-row="HOLD-001" id="learnerHoldReleaseBtn">Release payment hold (preview)</button></div>
+      <p class="note">Backend-only: learners in the Experience Cloud community never see BRE authoring, rule tables, or this decision detail. Community shows only the resulting eligibility / price / hold message.</p>
+    </article>
+    <div class="layout2">
+      <article class="card"><h3>Program Enrollments (1)</h3><div class="table-wrap"><table><thead><tr><th>Program Enrollment</th><th>Program</th><th>Status</th></tr></thead><tbody><tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">PE-2026-CS-8841</button></td><td>B.S. Computer Science</td><td><span class="badge green">Active</span></td></tr></tbody></table></div>
+      <h4>Course Enrollments (5)</h4><div class="table-wrap"><table><thead><tr><th>Ref</th><th>Course</th><th>CreditType__c</th><th>Status</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">ENR-4403-CS410</button></td><td>CS 410 Machine Learning</td><td>For-Credit</td><td><span class="badge green">Registered</span></td></tr>
+      <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">ENR-4403-PM101</button></td><td>CE PM-101 Project Mgmt</td><td>Non-Credit</td><td><span class="badge">Registered — CE</span></td></tr>
+      <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">ENR-2026-CS301</button></td><td>CS 301 Data Structures</td><td>For-Credit</td><td><span class="badge green">Enrolled</span></td></tr></tbody></table></div></article>
+
+      <div><article class="card"><h3>Cases (3) · Aid Awards (3) · Orders (1)</h3><div class="table-wrap"><table><thead><tr><th>Record</th><th>Subject</th><th>Status</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="case" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="case">Case #004821</button></td><td>Advising hold question</td><td><span class="badge amber">Working</span></td></tr>
+      <tr data-action="nav" data-view="aid" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="aid">State Opportunity Grant</button></td><td>$3,200 · 2026–27</td><td><span class="badge green">Fall disbursed</span></td></tr>
+      <tr data-action="nav" data-view="order" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="order">ORD-SUNY-2026-4403</button></td><td>Commerce order · $1,564</td><td><span class="badge amber">Plan active</span></td></tr>
+      </tbody></table></div></article>
+      <article class="card" style="margin-top:14px"><h3>Appointments &amp; Notifications</h3><ul class="feed"><li><b>Oct 22 · 2:00 PM</b> — Degree plan review with Maya Rivera <button class="link-btn" data-action="nav" data-view="case">Open →</button></li><li>Notification_Is_Read__c = false (2) — Aid disbursed; Advisor reply <button class="link-btn" data-action="toast" data-toast="Notifications preview — same records the learner sees read/unread in the community.">Preview →</button></li></ul></article></div>
+    </div>
+  </div>
+
+  <div class="rtab-panel" id="tab-learner-activity">
+    <article class="card"><h3>Activity Timeline — Chatter-style feed (sample)</h3><ul class="feed">
+      <li><b>Maya Rivera</b> posted: “Degree plan reviewed — let's meet Oct 22 to clear the hold.” <br><small>Oct 15 · Case #004821 · Internal + community-visible (sample)</small></li>
+      <li><b>System (Commerce)</b> — Order ORD-SUNY-2026-4403 confirmed; enrollments ENR-4403-CS410 / ENR-4403-PM101 created. <br><small>Oct 14 · Order_Reference__c = ORD-SUNY-2026-4403</small></li>
+      <li><b>Financial Aid (PSS)</b> — State Opportunity Grant Fall disbursement posted. <br><small>Oct 14 · Award status: Disbursed</small></li>
+      <li><b>Sample Learner (Pilot)</b> submitted Case #004821 via community. <br><small>Oct 8 · Channel: Experience Cloud</small></li>
+    </ul></article>
+  </div>
+</section>
+
+<!-- ============ 2. APPLICATION ============ -->
+<section class="view" id="view-application" aria-labelledby="app-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top">
+    <span class="obj-icon blue" aria-hidden="true">📋</span>
+    <div style="flex:1"><div class="obj-label">Opportunity · Application — Enrollment Specialist View</div><h2 class="rec-title" id="app-h">APP-2027-0184 — Sample Learner (Pilot)</h2><span class="badge amber" id="appStageBadge">Stage: Documents Review</span> <span class="badge">B.S. Computer Science</span> <span class="badge purple">BU: North Campus</span></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-sm" data-action="toast" data-toast="Task created preview — ‘Verify transcript’ assigned to Enrollment Specialist (sample).">Create Task</button><button class="btn btn-brand btn-sm" data-action="enroll-applicant">Enroll (Convert)</button></div>
+  </div>
+  <div class="keyfields"><div class="kf"><span>Applicant</span><b>Sample Learner (Pilot)</b></div><div class="kf"><span>Program of Interest</span><b>B.S. Computer Science</b></div><div class="kf"><span>StageName</span><b id="appStageField">Documents Review</b></div><div class="kf"><span>Campus_Business_Unit__c</span><b>North Campus</b></div><div class="kf"><span>Close / Start Term</span><b>Spring 2027</b></div><div class="kf"><span>Probability (sample)</span><b>60%</b></div><div class="kf"><span>Owner</span><b>Enrollment Specialist — J. Park</b></div><div class="kf"><span>Lead Source</span><b>Community Request Info</b></div></div></div>
+
+  <article class="card" style="margin-top:14px"><h3>Path — Application Stage</h3>
+    <ol class="path" id="appPath" aria-label="Application stages">
+      <li class="done" data-stage-idx="0"><button data-action="path-stage" data-stage="Lead" data-idx="0">Lead</button></li>
+      <li class="done" data-stage-idx="1"><button data-action="path-stage" data-stage="Applied" data-idx="1">Applied</button></li>
+      <li class="current" data-stage-idx="2"><button data-action="path-stage" data-stage="Documents Review" data-idx="2" aria-current="step">Documents Review</button></li>
+      <li data-stage-idx="3"><button data-action="path-stage" data-stage="Admit Decision" data-idx="3">Admit Decision</button></li>
+      <li data-stage-idx="4"><button data-action="path-stage" data-stage="Enrolled" data-idx="4">Enrolled</button></li>
+    </ol>
+    <p style="color:var(--muted);font-size:13px">Select a stage to preview its checklist (Path Coach pattern). Stage changes here are a prototype preview only.</p>
+    <div id="pathChecklist"></div>
+  </article>
+
+  <div class="rtabs" role="tablist" aria-label="Application tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="application" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="application" data-tab="related">Related (Documents / Tasks)</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="application" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-application-details"><div class="layout3"><article class="card"><h3>Applicant Information</h3><div class="fields">
+    <div class="field"><span>Applicant_Name__c</span>Sample Learner (Pilot)</div><div class="field"><span>Application_Reference__c</span>APP-2027-0184</div>
+    <div class="field"><span>Email</span>sample.learner@example.edu (sample)</div><div class="field"><span>Program_of_Interest__c</span>B.S. Computer Science</div>
+    <div class="field"><span>Campus_Business_Unit__c</span>North Campus (Marketing Cloud BU)</div><div class="field"><span>Intended_Start_Term__c</span>Spring 2027</div>
+    <div class="field"><span>Prior_Education__c</span>A.S. — sample transcript received</div><div class="field"><span>Converted_Learner__c</span><span id="convertedField">Not yet converted</span></div>
+  </div><p class="note"><b>Conversion note:</b> On Enroll, create/reuse the Learner (Contact/Person Account) + Community User from this applicant — match on email/Student ID, <b>do not create a duplicate person</b>. Set Converted_Learner__c and stamp source Application_Reference__c.</p></article>
+  <aside class="card"><h3>Next-Step Actions</h3><ul class="checklist"><li>☑ Verify transcript received</li><li>☐ Confirm program prerequisites</li><li>☐ Aid pre-check (PSS) — optional</li></ul><button class="btn btn-brand btn-sm" data-action="enroll-applicant">Mark Enrolled &amp; Convert →</button><p class="note">Conversion creates Learner 360 + Community User and links back here. No duplicate Contact.</p></aside></div></div>
+  <div class="rtab-panel" id="tab-application-related"><article class="card"><h3>Documents &amp; Tasks</h3><div class="table-wrap"><table><thead><tr><th>Item</th><th>Type</th><th>Status</th><th>Owner</th></tr></thead><tbody>
+    <tr><td>Transcript — A.S. (sample PDF)</td><td>Document</td><td><span class="badge green">Received</span></td><td>Enrollment Specialist</td></tr>
+    <tr><td>Verify transcript</td><td>Task</td><td><span class="badge amber">In Progress</span></td><td>J. Park</td></tr>
+    <tr data-action="nav" data-view="learner" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="learner">Converted Learner — Sample Learner (Pilot)</button></td><td>Contact</td><td>Created on Enroll</td><td>System</td></tr>
+  </tbody></table></div></article></div>
+  <div class="rtab-panel" id="tab-application-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>J. Park</b> moved stage to Documents Review. <small>Oct 16</small></li><li><b>Sample Learner (Pilot)</b> submitted application via community Request Info → Apply. <small>Oct 10</small></li><li><b>Marketing Cloud (North BU)</b> — nurture email opened (sample engagement). <small>Oct 9</small></li></ul></article></div>
+</section>
+
+<!-- ============ 3. PROGRAM ENROLLMENT ============ -->
+<section class="view" id="view-program" aria-labelledby="prog-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon green" aria-hidden="true">🎓</span>
+    <div style="flex:1"><div class="obj-label">Program Enrollment — Registrar View</div><h2 class="rec-title" id="prog-h">PE-2026-CS-8841 — B.S. Computer Science</h2><span class="badge green">Active</span> <span class="badge">Learner: Sample Learner (Pilot) · 884-1027</span></div>
+    <div><button class="btn btn-brand btn-sm" data-action="toast" data-toast="Add Course preview — Registrar would search the catalog, run prerequisite checks, and create a Course Enrollment (no record created here).">+ Add Course (Preview)</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Learner__c</span><b>Sample Learner (Pilot)</b></div><div class="kf"><span>Program__c</span><b>B.S. Computer Science</b></div><div class="kf"><span>Status__c</span><b>Active</b></div><div class="kf"><span>Current_Term__c</span><b>Fall 2026</b></div><div class="kf"><span>Credits_Attempted__c</span><b>94</b></div><div class="kf"><span>Credits_Completed__c</span><b>82</b></div><div class="kf"><span>Credits_Enrolled_Term__c</span><b>12 (Fall)</b></div><div class="kf"><span>Degree_Progress__c</span><b>68%</b></div></div></div>
+
+  <div class="rtabs" role="tablist" aria-label="Program enrollment tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="program" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="program" data-tab="related">Related — Course Enrollments</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="program" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-program-details"><article class="card"><h3>Program Enrollment Details</h3><div class="fields">
+    <div class="field"><span>Program_Enrollment_Reference__c</span>PE-2026-CS-8841</div><div class="field"><span>Start_Term__c</span>Fall 2025 (sample)</div>
+    <div class="field"><span>Expected_Graduation__c</span>May 2027</div><div class="field"><span>Catalog_Year__c</span>2025–26</div>
+    <div class="field"><span>Advisor__c</span>Maya Rivera</div><div class="field"><span>Hold_Flag__c</span>⚠️ Advising Hold — see Learner 360</div>
+  </div></article></div>
+  <div class="rtab-panel" id="tab-program-related"><article class="card"><h3>Course Enrollments</h3>
+    <div class="table-wrap"><table aria-label="Course enrollments"><thead><tr><th>Enrollment_Reference__c</th><th>Course</th><th>CreditType__c</th><th>Term / Dates</th><th>Credits / CEU</th><th>Prereq Check</th><th>Status</th></tr></thead><tbody>
+    <tr><td>ENR-2026-CS301</td><td>CS 301 Data Structures</td><td>For-Credit</td><td>Fall 2026</td><td>3 cr</td><td><span class="badge green">✓ Met</span></td><td><span class="badge green">Enrolled</span></td></tr>
+    <tr><td>ENR-2026-CS335</td><td>CS 335 Database Systems</td><td>For-Credit</td><td>Fall 2026</td><td>3 cr</td><td><span class="badge green">✓ Met</span></td><td><span class="badge green">Enrolled</span></td></tr>
+    <tr><td>ENR-4403-CS410</td><td>CS 410 Machine Learning</td><td>For-Credit</td><td>Spring 2027</td><td>3 cr</td><td><span class="badge green">✓ CS 301 met</span></td><td><span class="badge">Registered</span></td></tr>
+    <tr><td>ENR-4403-CS420*</td><td>CS 420 Cloud Systems</td><td>For-Credit</td><td>Spring 2027</td><td>3 cr</td><td><span class="badge amber">⚠ Needs CS 335 — in progress</span></td><td><span class="badge amber">Registered — Warning</span></td></tr>
+    <tr><td>ENR-4403-PM101</td><td><button class="link-btn" data-action="nav" data-view="cecourse">CE PM-101 Project Mgmt Fundamentals</button></td><td><span class="badge purple">Non-Credit</span></td><td>Start anytime · 4 wks</td><td>1.2 CEU</td><td><span class="badge grey">N/A — non-credit</span></td><td><span class="badge">Registered — CE</span></td></tr>
+    <tr><td>ENR-2026-EXL090</td><td>CE EXL-090 Excel for Professionals</td><td><span class="badge purple">Non-Credit</span></td><td>Sep 2026</td><td>0.6 CEU</td><td><span class="badge grey">N/A</span></td><td><span class="badge grey">Completed</span></td></tr>
+    </tbody></table></div>
+    <p class="note">*Prerequisite indicator is a sample validation: for-credit rows validate prerequisites; non-credit rows show N/A and never affect degree credits. Add-course preview would block/warn before creating a Course Enrollment.</p>
+    <article class="card" style="margin-top:14px;border-top:4px solid var(--gold)"><h3>OrderItem Enrollment Detail — ENR-4403-PM101</h3><div class="fields"><div class="field"><span>Course</span>CE PM-101 Project Management Fundamentals</div><div class="field"><span>Session</span>Start anytime · Online self-paced</div><div class="field"><span>Status</span>Registered — Continuing Ed</div><div class="field"><span>Certificate_Status__c</span>In Progress (complete course to earn)</div><div class="field"><span>CEU__c</span>1.2 CEU · Does NOT count toward degree</div><div class="field"><span>Access</span>Materials/access emailed within 1 business day (sample) — no LMS course player</div></div><button class="btn btn-brand btn-sm" data-action="nav" data-view="cecourse" style="margin-top:10px">Open Product2 / Session Record →</button></article>
+    <button class="btn btn-brand btn-sm" data-action="toast" data-toast="Add Course preview — catalog search + prerequisite check would run here (Registrar).">+ Add Course (Preview)</button>
+    <button class="btn btn-sm" data-action="nav" data-view="order">View Source Order ORD-SUNY-2026-4403</button></article></div>
+  <div class="rtab-panel" id="tab-program-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>Commerce</b> created ENR-4403-CS410 + ENR-4403-PM101 from ORD-SUNY-2026-4403. <small>Oct 14</small></li><li><b>Registrar (sample)</b> approved CS 420 prerequisite warning override review. <small>Pending</small></li></ul></article></div>
+</section>
+
+<!-- ============ 4. CASE ============ -->
+<section class="view" id="view-case" aria-labelledby="case-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon orange" aria-hidden="true">🧭</span>
+    <div style="flex:1"><div class="obj-label">Case — Advising / Support · Advisor View</div><h2 class="rec-title" id="case-h">Case #004821 — Advising hold question</h2><span class="badge amber">Status: Working</span> <span class="badge">Priority: Medium</span> <span class="badge purple">Origin: Community</span></div>
+    <div><button class="btn btn-sm" data-action="toast" data-toast="Feed post preview — Chatter post would be saved in-org (nothing posted here).">Post to Feed</button> <button class="btn btn-brand btn-sm" data-action="toast" data-toast="Status preview — case would move to Closed after advising meeting (prototype only).">Close Case (Preview)</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Contact (Learner)</span><b>Sample Learner (Pilot) · 884-1027</b></div><div class="kf"><span>Owner</span><b>Maya Rivera</b></div><div class="kf"><span>Status</span><b>Working</b></div><div class="kf"><span>Created</span><b>Oct 8, 2026</b></div><div class="kf"><span>SLA / Entitlement (sample)</span><b>First response ✓ · Resolution due Oct 24</b></div><div class="kf"><span>Related Appointment</span><b>Oct 22 · 2:00 PM</b></div><div class="kf"><span>Hold_Link__c</span><b>HOLD-ADV-01</b></div><div class="kf"><span>Business Unit</span><b>North Campus</b></div></div></div>
+
+  <article class="card" style="margin-top:14px"><h3>Status Path (sample)</h3><ol class="path" aria-label="Case status">
+    <li class="done"><button data-action="toast" data-toast="Status preview: New (already passed).">New</button></li>
+    <li class="current"><button data-action="toast" data-toast="Current status: Working." aria-current="step">Working</button></li>
+    <li><button data-action="toast" data-toast="Status preview — would move to Escalated (prototype only).">Escalated</button></li>
+    <li><button data-action="toast" data-toast="Status preview — would move to Closed after resolution (prototype only).">Closed</button></li></ol></article>
+
+  <div class="rtabs" role="tablist" aria-label="Case tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="case" data-tab="details">Details &amp; Feed</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="case" data-tab="related">Related</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="case" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-case-details"><div class="layout3"><article class="card"><h3>Case Feed — Chatter-style</h3><ul class="feed">
+    <li><b>Sample Learner (Pilot)</b> (via community): “Do I need to clear my advising hold before Spring enrollment?” <small>Oct 8</small></li>
+    <li><b>Maya Rivera</b>: “Yes — let's review your degree plan Oct 22. I've held a 2:00 PM slot; your Spring cart can stay saved meanwhile.” <small>Oct 15 · Community-visible</small></li>
+    <li><b>System</b>: Appointment created — Oct 22, 2:00 PM (Video). <small>Oct 15</small></li></ul>
+    <button class="btn btn-sm" data-action="toast" data-toast="Feed composer preview — no post is published in this prototype.">Write a post… (Preview)</button></article>
+  <aside class="card"><h3>SLA / Entitlement (sample panel)</h3><div class="fields"><div class="field"><span>Entitlement__c</span>Standard Advising Support</div><div class="field"><span>First_Response__c</span>✓ Met (4h)</div><div class="field"><span>Resolution_Due__c</span>Oct 24, 2026</div><div class="field"><span>Milestone_Status__c</span>On Track</div></div><p class="note">Milestone/entitlement objects vary by org — confirm in-org; shown generically (see spec).</p></aside></div></div>
+  <div class="rtab-panel" id="tab-case-related"><article class="card"><h3>Related</h3><div class="table-wrap"><table><thead><tr><th>Record</th><th>Detail</th></tr></thead><tbody>
+    <tr data-action="nav" data-view="learner" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="learner">Learner — Sample Learner (Pilot)</button></td><td>884-1027 · B.S. CS</td></tr>
+    <tr data-action="nav" data-view="learner" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="learner">Appointment — Oct 22, 2:00 PM</button></td><td>Degree plan review · Maya Rivera</td></tr>
+    <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">Program Enrollment PE-2026-CS-8841</button></td><td>Spring cart / hold context</td></tr>
+  </tbody></table></div></article></div>
+  <div class="rtab-panel" id="tab-case-activity"><article class="card"><h3>Activity Timeline</h3><ul class="feed"><li>Case created from Experience Cloud. <small>Oct 8</small></li><li>Owner assigned: Maya Rivera (Advisor queue). <small>Oct 8</small></li><li>First response sent. <small>Oct 8 · within SLA</small></li></ul></article></div>
+</section>
+
+
+<!-- ============ CE COURSE / SESSION (NON-CREDIT) ============ -->
+<section class="view" id="view-cecourse" aria-labelledby="ce-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon orange" aria-hidden="true">⭐</span>
+    <div style="flex:1"><div class="obj-label">Product2 — CE Course (NonCredit) · CE Ops + Registrar View</div><h2 class="rec-title" id="ce-h">Product2: CE PM-101 — Project Management Fundamentals</h2><span class="badge amber">Non-Credit · Continuing Ed</span> <span class="badge">Does NOT count toward degree credit</span> <span class="badge purple">Not aid-eligible</span></div>
+    <div><button class="btn btn-sm" data-action="nav" data-view="learner">Open a Learner</button> <button class="btn btn-brand btn-sm" data-action="toast" data-toast="Issue Certificates preview — 11 certificates would be generated for completers (prototype only).">Issue Certificates (Preview)</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Course_Code__c</span><b>CE PM-101</b></div><div class="kf"><span>FlatFee__c</span><b>$499 flat fee</b></div><div class="kf"><span>CEU__c</span><b>1.2 CEU</b></div><div class="kf"><span>Delivery_Mode__c</span><b>Online · Self-paced</b></div><div class="kf"><span>Session_Start__c</span><b>Start anytime</b></div><div class="kf"><span>Seats_Capacity__c</span><b>38 / 50 enrolled</b></div><div class="kf"><span>Waitlist__c</span><b>0 (open)</b></div><div class="kf"><span>Certificate</span><b>Certificate available</b></div></div></div>
+
+  <article class="card" style="margin-top:14px"><h3>Capacity — Current Session</h3><p><b>38 of 50 seats enrolled (76%)</b> · Waitlist: 0 · Next cohort session also scheduled below.</p><div class="progress" role="img" aria-label="Session capacity 76 percent filled"><i style="width:76%"></i></div></article>
+
+  <div class="rtabs" role="tablist" aria-label="CE course tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="cecourse" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="cecourse" data-tab="related">Related — Sessions / Roster / Waitlist / Sponsors</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="cecourse" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-cecourse-details"><article class="card"><h3>Product2 Details — Dynamic Forms (sample fields)</h3><div class="fields">
+    <div class="field"><span>Course_Code__c</span>CE PM-101</div><div class="field"><span>CreditType__c</span>Non-Credit</div>
+    <div class="field"><span>FlatFee__c</span>$499 (no per-credit tuition)</div><div class="field"><span>CEU__c</span>1.2</div>
+    <div class="field"><span>Delivery_Mode__c</span>Online · Self-paced</div><div class="field"><span>Session_Start__c</span>Start anytime (rolling)</div>
+    <div class="field"><span>Seats_Capacity__c</span>50</div><div class="field"><span>Waitlist_Enabled__c</span>Yes</div>
+    <div class="field"><span>Employer_Sponsor__c (Account lookup)</span>Workforce Partner (sample) — standard Account; employer paid via PSS state payment (Employer_Sponsored)</div><div class="field"><span>Certificate_Status__c (template)</span>Issued on completion</div>
+    <div class="field"><span>Degree_Credit__c</span>No — never posts to degree progress</div><div class="field"><span>Aid_Eligible__c (degree aid)</span>No — not degree financial aid; employer/workforce payment is tracked <b>in PSS</b> via RecordType Employer_Sponsored / State_Workforce_Funding</div>
+  </div><p class="note">Access model: materials/access are emailed within 1 business day and the instructor contacts learners — this community/console is <b>not an LMS</b>; there is no course-player link.</p></article></div>
+
+  <div class="rtab-panel" id="tab-cecourse-related">
+    <article class="card"><h3>Sessions &amp; Cohorts</h3><div class="table-wrap"><table aria-label="CE sessions"><thead><tr><th>Session</th><th>Start</th><th>Delivery</th><th>Seats</th><th>Waitlist</th><th>Status</th></tr></thead><tbody>
+    <tr><td>PM101-ROLLING</td><td>Start anytime</td><td>Online self-paced</td><td>38 / 50</td><td>0</td><td><span class="badge green">Open</span></td></tr>
+    <tr><td>PM101-FEB27</td><td>Feb 2, 2027 cohort</td><td>Online + live kickoff</td><td>9 / 30</td><td>0</td><td><span class="badge">Enrolling</span></td></tr>
+    <tr><td>CE CNA-201 · FEB27 (related CE course)</td><td>Feb 2, 2027</td><td>West Campus hybrid</td><td>20 / 24</td><td>Open</td><td><span class="badge amber">Filling fast</span></td></tr>
+    <tr><td>CE HVAC-220 · MAR27 (related CE course)</td><td>Mar 3, 2027</td><td>North Campus in-person</td><td>12 / 16</td><td>4 waiting</td><td><span class="badge amber">Waitlist</span></td></tr>
+    </tbody></table></div></article>
+    <div class="layout2">
+      <article class="card"><h3>Enrollment Roster (sample)</h3><div class="table-wrap"><table><thead><tr><th>Learner</th><th>Enrollment_Reference__c</th><th>Status</th><th>Certificate_Status__c</th></tr></thead><tbody>
+      <tr data-action="nav" data-view="learner" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="learner">Sample Learner (Pilot)</button></td><td>ENR-4403-PM101</td><td><span class="badge">Registered</span></td><td>In Progress</td></tr>
+      <tr><td>Jordan Lee (sample)</td><td>ENR-4410-PM101</td><td><span class="badge green">In Progress</span></td><td>In Progress</td></tr>
+      <tr><td>Priya Nair (sample)</td><td>ENR-4390-PM101</td><td><span class="badge grey">Completed</span></td><td><span class="badge green">Ready to Issue</span></td></tr>
+      </tbody></table></div></article>
+      <article class="card"><h3>Waitlist &amp; Employer Sponsors</h3><div class="table-wrap"><table><thead><tr><th>Item</th><th>Detail</th><th>Status</th></tr></thead><tbody>
+      <tr><td>Waitlist — CE HVAC-220</td><td>4 learners waiting (sample)</td><td><span class="badge amber">Waitlist</span></td></tr>
+      <tr data-action="nav" data-view="psspayment" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="psspayment">Employer Sponsor — Workforce Partner (Account)</button></td><td><button class="link-btn" data-action="nav" data-view="psspayment">6 sponsored seats → PSS payment list/record (Employer_Sponsored)</button> · Paid by employer via PSS · $0 learner due</td><td><span class="badge">Sponsored · PSS</span></td></tr>
+      <tr data-action="nav" data-view="psspayment" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="psspayment">Workforce funding (WIOA-style, sample)</button></td><td>2 learners · PSS RecordType State_Workforce_Funding (in PSS, not degree aid)</td><td><span class="badge purple">Funded · PSS</span></td></tr>
+      </tbody></table></div></article>
+    </div>
+  </div>
+  <div class="rtab-panel" id="tab-cecourse-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>CE Ops</b> — 38 start-anytime enrollments recorded this session. <small>Today (sample)</small></li><li><b>System (Commerce)</b> — ENR-4403-PM101 created from ORD-SUNY-2026-4403 for Sample Learner (Pilot). <small>Oct 14</small></li><li><b>Instructor</b> — Welcome/access emails queued (within 1 business day). <small>Sample</small></li></ul></article></div>
+</section>
+
+<!-- ============ 5. FINANCIAL AID AWARD (PSS) ============ -->
+<section class="view" id="view-aid" aria-labelledby="aid-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon teal" aria-hidden="true">💵</span>
+    <div style="flex:1"><div class="obj-label">Financial Aid Award — Public Sector Solutions (generic) · Aid Officer View</div><h2 class="rec-title" id="aid-h">State Opportunity Grant — Sample Learner (Pilot)</h2><span class="badge" style="font-size:12px">Record Type: Degree_Financial_Aid</span> <span class="badge green">Eligibility: Eligible</span> <span class="badge">2026–27 · $3,200</span> <span class="badge amber">Fall Disbursed</span></div>
+    <div><button class="btn btn-sm" data-action="nav" data-view="learner">Open Learner</button> <button class="btn btn-brand btn-sm" data-action="nav" data-view="order">View Order</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Learner__c</span><b>Sample Learner (Pilot) · 884-1027</b></div><div class="kf"><span>Award_Reference__c</span><b>AWD-SOG-2026-118</b></div><div class="kf"><span>Total_Award_Amount__c</span><b>$3,200</b></div><div class="kf"><span>Eligibility_Status__c</span><b>Eligible</b></div><div class="kf"><span>RecordType</span><b>Degree_Financial_Aid</b></div><div class="kf"><span>Source_Type__c</span><b>State Funding (PSS)</b></div><div class="kf"><span>CreditType_Scope__c</span><b>For-Credit tuition only</b></div><div class="kf"><span>Disbursed_To_Date__c</span><b>$1,600 (Fall)</b></div><div class="kf"><span>Owner</span><b>Aid Officer — T. Nguyen</b></div></div></div>
+
+  <div class="rtabs" role="tablist" aria-label="Aid award tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="aid" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="aid" data-tab="related">Related — Disbursements</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="aid" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-aid-details"><article class="card"><h3>Award Details (PSS-style, generic field names)</h3><div class="fields">
+    <div class="field"><span>RecordType (PSS)</span><b>Degree_Financial_Aid</b> — sibling PSS record types: Employer_Sponsored (employer-paid CE, <button class="link-btn" data-action="nav" data-view="psspayment">open PSS-PAY-2026-1049 →</button>) and State_Workforce_Funding. Record type drives page layout/fields/reporting.</div><div class="field"><span>Program_Basis__c</span>State Opportunity Grant (sample state program)</div><div class="field"><span>Residency_Basis__c</span>In-state (sample, verified)</div>
+    <div class="field"><span>Enrollment_Intensity_Basis__c</span>Full-time for-credit (12 cr Fall)</div><div class="field"><span>NonCredit_Eligible__c</span>No — CE / non-credit excluded</div>
+    <div class="field"><span>Linked_Order__c</span>ORD-SUNY-2026-4403 (aid applied to for-credit lines)</div><div class="field"><span>Linked_Learner__c</span>Sample Learner (Pilot)</div>
+  </div><p class="note"><b>PSS caveat:</b> Public Sector Solutions object/field names vary by org and package version. Records here use generic Aid Award / Disbursement placeholders — <b>confirm exact PSS object names in-org</b> before building (see spec).</p></article></div>
+  <div class="rtab-panel" id="tab-aid-related"><article class="card"><h3>Disbursement Schedule</h3><div class="table-wrap"><table><thead><tr><th>Disbursement</th><th>Term</th><th>Amount</th><th>Scheduled</th><th>Status</th></tr></thead><tbody>
+    <tr><td>DISB-SOG-F26</td><td>Fall 2026</td><td>$1,600</td><td>Oct 14, 2026</td><td><span class="badge green">Disbursed</span></td></tr>
+    <tr><td>DISB-SOG-S27</td><td>Spring 2027</td><td>$1,600</td><td>Jan 20, 2027 (sample)</td><td><span class="badge amber">Pending — enrollment check</span></td></tr>
+  </tbody></table></div>
+  <h4>Linked Records</h4><p><button class="link-btn" data-action="nav" data-view="learner">Learner — Sample Learner (Pilot) →</button> · <button class="link-btn" data-action="nav" data-view="order">Order ORD-SUNY-2026-4403 →</button> · <button class="link-btn" data-action="nav" data-view="program">Program Enrollment PE-2026-CS-8841 →</button></p></article></div>
+  <div class="rtab-panel" id="tab-aid-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>PSS (sample flow)</b> — Fall disbursement posted to learner account. <small>Oct 14</small></li><li><b>Aid Officer</b> verified eligibility (residency + for-credit intensity). <small>Sep 28</small></li></ul></article></div>
+</section>
+
+
+<!-- ============ 5b. PSS STATE PAYMENT (EMPLOYER_SPONSORED) ============ -->
+<section class="view" id="view-psspayment" aria-labelledby="pss-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button> <button class="btn btn-sm" data-action="nav" data-view="order">Open Order ORD-SUNY-2026-4403</button> <button class="btn btn-sm" data-action="nav" data-view="learner">Open Learner 360</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon teal" aria-hidden="true">🏛️</span>
+    <div style="flex:1"><div class="obj-label">PSS State Payment / Funding Record — Public Sector Solutions (generic) · Finance / CE Ops View</div><h2 class="rec-title" id="pss-h">PSS-PAY-2026-1049 — Employer-Paid CE Payment</h2><span class="badge" style="font-size:13px;background:#fff7e6;border-color:#f5c542">⭐ Record Type: Employer_Sponsored</span> <span class="badge amber">Status: Invoiced</span> <span class="badge purple">Non-Credit · No degree credit · Not degree aid</span></div>
+    <div><button class="btn btn-sm" data-action="nav" data-view="cecourse">Product2</button> <button class="btn btn-brand btn-sm" data-action="toast" data-toast="Preview — in-org this would advance the PSS payment status (Authorized → Invoiced → Paid); nothing is changed here.">Advance Status (Preview)</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Record Type (RecordType)</span><b>Employer_Sponsored</b></div><div class="kf"><span>Funding/Payment Record Name</span><b>PSS-PAY-2026-1049</b></div><div class="kf"><span>Employer Sponsor (Account)</span><b>Workforce Partner (sample)</b></div><div class="kf"><span>Learner (Contact)</span><b>Jordan Lee (sample)</b></div><div class="kf"><span>Amount</span><b>$499 — CE PM-101</b></div><div class="kf"><span>Status</span><b>Authorized → Invoiced → Paid · current: Invoiced</b></div><div class="kf"><span>State Payment Date</span><b>— (set when Paid; sample expected Oct 30, 2026)</b></div><div class="kf"><span>Campus</span><b>North Campus</b></div></div></div>
+
+  <div class="alert" role="note">💡 <b>How this works:</b> PSS must tie to employer-paid non-credit courses. Employers show as paying for their learners' courses through <b>PSS state payments selected by Record Type</b>. <b>Employer_Sponsored</b> ≠ degree aid — the CE course still never counts toward degree credit and is not degree financial aid. <b>Confirm exact PSS object/API names in-org</b> — object/field names here are generic PSS naming, not definitive API names.</div>
+
+  <div class="rtabs" role="tablist" aria-label="PSS payment tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="psspayment" data-tab="details">Details</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="psspayment" data-tab="related">Related — PSS Payments by Record Type</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="psspayment" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-psspayment-details"><div class="layout3"><article class="card"><h3>PSS State Payment Details (generic PSS field names — confirm in-org)</h3><div class="fields">
+    <div class="field"><span>RecordType</span><b>Employer_Sponsored</b> (prominent — drives page layout, fields &amp; reporting)</div>
+    <div class="field"><span>Funding/Payment Record</span>PSS-PAY-2026-1049</div>
+    <div class="field"><span>Employer Sponsor — Employer_Sponsor_Account__c (standard Account)</span>Workforce Partner (sample) · Employer billing contact on Account</div>
+    <div class="field"><span>Learner__c (standard Contact / Person Account)</span>Jordan Lee (sample) · sponsored learner</div>
+    <div class="field"><span>OrderItem (Enrollment)</span><button class="link-btn" data-action="nav" data-view="cecourse">ENR-4410-PM101 — CE PM-101 Project Management Fundamentals →</button></div>
+    <div class="field"><span>Linked Order (standard Order / OrderItem)</span><button class="link-btn" data-action="nav" data-view="order">ORD-SUNY-2026-4403 — employer-sponsored line ($0 learner due, excluded from $1,564 learner total) →</button></div>
+    <div class="field"><span>Amount__c</span>$499 (CE PM-101 flat fee)</div>
+    <div class="field"><span>Payment_Status__c</span>Authorized → <b>Invoiced</b> → Paid (current: Invoiced)</div>
+    <div class="field"><span>State_Payment_Date__c</span>— on payment (sample expected Oct 30, 2026)</div>
+    <div class="field"><span>Account (Campus RT) / Business Unit</span>North Campus</div>
+    <div class="field"><span>Source_Type__c</span>Employer Sponsored — employer pays SUNY Pilot for learner's non-credit course</div>
+    <div class="field"><span>Invoice Reference (standard Invoice if used)</span>INV-EMP-2026-031 (sample, if Invoice object used in-org)</div>
+    <div class="field"><span>CreditType__c</span>Non-Credit — never posts to degree progress (82/120 unchanged)</div>
+    <div class="field"><span>Degree_Aid_Flag__c</span>No — not degree financial aid, never netted into Degree_Financial_Aid awards/disbursements</div>
+  </div><p class="note"><b>Confirm in-org:</b> PSS object/API names are generic placeholders (state payment / funding record). <b>Confirm exact PSS object/API names in-org</b> before building; do not treat the names above as definitive API names.</p></article>
+  <aside><article class="card"><h3>Record Type picklist — PSS state payment/funding</h3><div class="table-wrap"><table aria-label="PSS record types"><thead><tr><th>Record Type</th><th>Used for</th></tr></thead><tbody><tr data-action="nav" data-view="aid" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="aid">Degree_Financial_Aid</button></td><td>Degree aid awards/disbursements — for-credit only (e.g. AWD-SOG-2026-118)</td></tr><tr><td><b>Employer_Sponsored</b> ⭐ this record</td><td>Employer pays for learner's non-credit CE course (e.g. $499 CE PM-101)</td></tr><tr><td>State_Workforce_Funding</td><td>State/WIOA-style workforce funding for non-credit CE (sample)</td></tr></tbody></table></div><p class="note">One generic PSS state-payment/funding object, three record types. Record type drives page layout, visible fields, validation, list views and reporting — employer-paid CE is reported in PSS without becoming degree aid.</p></article>
+  <article class="card" style="margin-top:14px"><h3>Standard objects considered (hybrid)</h3><ul style="padding-left:18px;font-size:13px;color:var(--muted)"><li><b>Account (standard)</b> — Employer Sponsor: Workforce Partner.</li><li><b>Contact / Person Account (standard)</b> — Learner.</li><li><b>Order / OrderItem (standard Commerce)</b> — sponsored seats as order lines ($0 learner due); <b>Invoice</b> if used in-org for employer billing; Opportunity only where a B2B sponsorship agreement/pipeline is managed.</li><li><b>PSS state payment (generic)</b> — the funding/payment system of record tied by RecordType, linked to Account + OrderItem Enrollment + Order.</li></ul></article></aside></div></div>
+  <div class="rtab-panel" id="tab-psspayment-related"><article class="card"><h3>PSS Payments — List View by Record Type + Campus (sample)</h3><div class="table-wrap"><table aria-label="PSS payments by record type"><thead><tr><th>Record</th><th>RecordType</th><th>Employer / Source</th><th>Learner</th><th>Course / Link</th><th>Amount</th><th>Status</th><th>Campus</th></tr></thead><tbody>
+    <tr><td><b>PSS-PAY-2026-1049</b> (this record)</td><td><b>Employer_Sponsored</b></td><td>Workforce Partner (Account)</td><td>Jordan Lee (sample)</td><td><button class="link-btn" data-action="nav" data-view="cecourse">CE PM-101 · ENR-4410-PM101</button></td><td>$499</td><td><span class="badge amber">Invoiced</span></td><td>North Campus</td></tr>
+    <tr><td>PSS-PAY-2026-1050</td><td>Employer_Sponsored</td><td>Workforce Partner (Account)</td><td>5 more sponsored learners (sample)</td><td>CE PM-101 seats (6 sponsored seats in queue)</td><td>$2,495</td><td><span class="badge">Authorized</span></td><td>North Campus</td></tr>
+    <tr data-action="nav" data-view="aid" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="aid">AWD-SOG-2026-118</button></td><td>Degree_Financial_Aid</td><td>State Funding (PSS)</td><td>Sample Learner (Pilot)</td><td>For-credit tuition only</td><td>$3,200</td><td><span class="badge green">Fall disbursed</span></td><td>North Campus</td></tr>
+    <tr><td>PSS-PAY-2026-1033</td><td>State_Workforce_Funding</td><td>State workforce (WIOA-style, sample)</td><td>2 learners (sample)</td><td>Non-credit CE</td><td>— sample</td><td><span class="badge purple">Funded</span></td><td>North Campus</td></tr>
+  </tbody></table></div><p><button class="link-btn" data-action="nav" data-view="learner">Learner 360 funding summary →</button> · <button class="link-btn" data-action="nav" data-view="order">Order employer-sponsored line →</button> · <button class="link-btn" data-action="nav" data-view="cecourse">Product2 / CE Ops queue →</button></p></article></div>
+  <div class="rtab-panel" id="tab-psspayment-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>Finance</b> — Employer invoice issued from PSS payment PSS-PAY-2026-1049 (Employer_Sponsored); status Authorized → Invoiced. <small>Oct 18 (sample)</small></li><li><b>CE Ops</b> — OrderItem Enrollment ENR-4410-PM101 linked; completion will be reported to employer Account on completion. <small>Sample</small></li><li><b>System</b> — $0 learner due stamped on linked Order line; learner total on ORD-SUNY-2026-4403 unchanged at $1,564. <small>Oct 14</small></li></ul></article></div>
+</section>
+
+<!-- ============ 6. ORDER (COMMERCE) ============ -->
+<section class="view" id="view-order" aria-labelledby="order-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon pink" aria-hidden="true">🧾</span>
+    <div style="flex:1"><div class="obj-label">Order — Commerce Cloud · Finance View</div><h2 class="rec-title" id="order-h">ORD-SUNY-2026-4403</h2><span class="badge green">Confirmed</span> <span class="badge amber">Payment: Payment Plan Active</span> <span class="badge">$1,564.00 total (sample)</span></div>
+    <div><button class="btn btn-sm" data-action="nav" data-view="learner">Open Learner</button></div></div>
+  <div class="keyfields"><div class="kf"><span>Order_Reference__c</span><b>ORD-SUNY-2026-4403</b></div><div class="kf"><span>Account / Learner</span><b>Sample Learner (Pilot) · 884-1027</b></div><div class="kf"><span>Order Total</span><b>$1,564.00</b></div><div class="kf"><span>Payment_Status__c</span><b>Plan Active · $0 charged at checkout (sim.)</b></div><div class="kf"><span>Estimated Aid Applied</span><b>−$574 (for-credit only)</b></div><div class="kf"><span>Ordered Date</span><b>Oct 14, 2026 (sample)</b></div><div class="kf"><span>Source</span><b>Experience Cloud Checkout</b></div><div class="kf"><span>Owner</span><b>Finance — R. Alvarez</b></div></div></div>
+
+  <div class="rtabs" role="tablist" aria-label="Order tabs">
+    <button role="tab" aria-selected="true" data-action="record-tab" data-record="order" data-tab="details">Details — Order Items</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="order" data-tab="related">Related — Payments / Enrollments</button>
+    <button role="tab" aria-selected="false" data-action="record-tab" data-record="order" data-tab="activity">Activity</button>
+  </div>
+  <div class="rtab-panel active" id="tab-order-details"><article class="card"><h3>Order Items — mixed CreditType__c lines</h3>
+    <div class="table-wrap"><table aria-label="Order items"><thead><tr><th>Line</th><th>Product / Course</th><th>CreditType__c</th><th>Unit Price</th><th>Total</th><th>Enrollment Created</th></tr></thead><tbody>
+    <tr data-action="nav" data-view="program" tabindex="0"><td>1</td><td><button class="link-btn" data-action="nav" data-view="program">CS 410 Machine Learning Fundamentals</button></td><td><span class="badge">For-Credit</span></td><td>$485/cr × 3 cr</td><td>$1,455</td><td>ENR-4403-CS410</td></tr>
+    <tr data-action="nav" data-view="program" tabindex="0"><td>2</td><td><button class="link-btn" data-action="nav" data-view="program">CE PM-101 Project Management Fundamentals</button></td><td><span class="badge purple">Non-Credit</span></td><td>$499 flat fee</td><td>$499</td><td>ENR-4403-PM101</td></tr>
+    <tr data-action="nav" data-view="psspayment" tabindex="0"><td>—</td><td><button class="link-btn" data-action="nav" data-view="psspayment">Employer-sponsored CE seats — Workforce Partner (Account, sample, other registrations) → PSS-PAY-2026-1049</button><br><small>Paid by employer via PSS state payment · RecordType Employer_Sponsored · $0 learner due</small></td><td><span class="badge purple">Non-Credit</span></td><td>Paid by employer via PSS (Employer_Sponsored)</td><td>$0 learner due</td><td>See PSS payment record →</td></tr>
+    <tr><td>—</td><td>Technology fee (for-credit enrollment)</td><td>Fee</td><td>—</td><td>$184</td><td>—</td></tr>
+    <tr><td>—</td><td>Estimated financial aid applied (for-credit lines only)</td><td>Aid</td><td>—</td><td>−$574</td><td>See Aid Award →</td></tr>
+    <tr><td colspan="4" style="text-align:right"><b>Total Due (simulation)</b></td><td><b>$1,564</b></td><td></td></tr>
+    </tbody></table></div><p class="note">Non-credit lines are flat-fee, CEU-based, not degree financial aid, and create Continuing Education enrollments that never affect degree progress. The employer-sponsored line above is <b>excluded from the learner order total</b> (total stays $1,564) because the employer pays via the linked PSS state payment (RecordType Employer_Sponsored); sponsored seats use standard Order/OrderItem concepts where sensible, with the employer as a standard Account.</p></article></div>
+  <div class="rtab-panel" id="tab-order-related"><div class="layout2">
+    <article class="card"><h3>Payments &amp; Payment Plan Installments</h3><div class="table-wrap"><table><thead><tr><th>Installment</th><th>Due</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+    <tr><td>Plan Inst. 1</td><td>Nov 1, 2026 (sample)</td><td>$522</td><td><span class="badge amber">Scheduled</span></td></tr>
+    <tr><td>Plan Inst. 2</td><td>Dec 1, 2026</td><td>$521</td><td><span class="badge grey">Scheduled</span></td></tr>
+    <tr><td>Plan Inst. 3</td><td>Jan 1, 2027</td><td>$521</td><td><span class="badge grey">Scheduled</span></td></tr>
+    <tr><td>Checkout payment</td><td>Oct 14, 2026</td><td>$0 — simulation, no charge</td><td><span class="badge green">Recorded</span></td></tr>
+    </tbody></table></div></article>
+    <article class="card"><h3>Enrollments Created From This Order</h3><div class="table-wrap"><table><thead><tr><th>Enrollment_Reference__c</th><th>Course</th><th>Type</th></tr></thead><tbody>
+    <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">ENR-4403-CS410</button></td><td>CS 410</td><td>For-Credit</td></tr>
+    <tr data-action="nav" data-view="program" tabindex="0"><td><button class="link-btn" data-action="nav" data-view="program">ENR-4403-PM101</button></td><td>CE PM-101</td><td>Non-Credit</td></tr>
+    </tbody></table></div><p><button class="link-btn" data-action="nav" data-view="aid">Aid Award — State Opportunity Grant →</button></p></article>
+  </div></div>
+  <div class="rtab-panel" id="tab-order-activity"><article class="card"><h3>Activity</h3><ul class="feed"><li><b>Commerce Checkout (community)</b> — Order confirmed; payment method = payment-plan placeholder; $0 charged in simulation. <small>Oct 14</small></li><li><b>System</b> — Course Enrollments created and linked by Order_Reference__c. <small>Oct 14</small></li></ul></article></div>
+</section>
+
+<!-- ============ BUSINESS RULES ENGINE (BRE) SHOWCASE ============ -->
+<section class="view" id="view-bre" aria-labelledby="bre-h">
+  <button class="btn btn-sm" data-action="nav" data-view="home">← Back to Workspace</button>
+  <div class="rec-head" style="margin-top:10px"><div class="rec-top"><span class="obj-icon navy" aria-hidden="true">⚖️</span>
+    <div style="flex:1"><div class="obj-label">Business Rules Engine (BRE) — Decision Layer · Prototype Showcase</div><h2 class="rec-title" id="bre-h">Rules Engine (BRE) — SUNY CE Eligibility</h2><span class="badge purple">Rule set: SUNY_CE_Eligibility v1</span> <span class="badge">Expression Sets + Decision Tables (concept)</span> <span class="badge amber">SUNY Pilot fictional data</span></div>
+    <div><button class="btn btn-sm" data-action="nav" data-view="order">Open Order</button> <button class="btn btn-brand btn-sm" data-action="nav" data-view="psspayment">PSS Payment</button> <a class="btn btn-sm" href="bre-mock.html" style="text-decoration:none">Interactive BRE mock →</a></div></div>
+  <div class="keyfields"><div class="kf"><span>Decision service (concept)</span><b>Apex service → BRE</b></div><div class="kf"><span>Invoked from</span><b>LWC / Flow / Apex</b></div><div class="kf"><span>Stored on</span><b>Order (decision + reason + version)</b></div><div class="kf"><span>Rule sets</span><b>6 decision tables below (5 + SUNY_Payment_Hold, new)</b></div></div></div>
+
+  <div class="alert" role="note">ℹ️ <b>In Salesforce:</b> Expression Sets + Decision Tables (BRE), invoked via Apex service, decision+reason+version stored on Order. <b>Confirm BRE license/API in-org.</b> This page is a static prototype mirror of the sample tables — no org, no API call, generic description only. SUNY Pilot sample data only (not official SUNY; learners/prices fictional).</div>
+
+  <!-- BRE persona switcher — backend-only. Community users never see BRE authoring. -->
+  <article class="card" style="margin-top:14px;border-top:4px solid var(--navy)" id="brePersonaPanel" aria-labelledby="brePersonaH">
+    <h3 id="brePersonaH">Persona — who is acting? (backend-only)</h3>
+    <p style="color:var(--muted);margin-top:0">BRE is <b>backend-only</b>: community (Experience Cloud) users never see BRE authoring, decision tables, or the persona switcher. Switch persona to re-render permissions — buttons enable/disable, sections show/hide, and queues filter. This is <b>actually gated in JS</b> (<code>BRE_PERSONAS</code>), not just labelled.</p>
+    <div class="fields">
+      <div class="field"><span><label for="brePersona">Acting persona</label></span>
+        <select id="brePersona" data-bre-persona style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px">
+          <option value="enrollment">Enrollment Specialist</option>
+          <option value="registrar">Registrar</option>
+          <option value="advisor">Education Advisor</option>
+          <option value="ceops">CE Ops</option>
+          <option value="finance">Finance / PSS</option>
+          <option value="breaadmin">BRE Admin (named small group)</option>
+        </select></div>
+      <div class="field"><span>Rule access for this persona</span><b id="breRuleAccessLabel">Read-only — BRE Admin managed</b></div>
+    </div>
+    <div id="brePersonaSummary" aria-live="polite" style="margin-top:10px"></div>
+    <h4 style="color:var(--navy)">Persona matrix</h4>
+    <div class="table-wrap"><table aria-label="BRE persona matrix" id="personaMatrix"><thead><tr><th>Persona</th><th>Sees</th><th>Runs</th><th>Can override</th><th>Rule access</th></tr></thead><tbody>
+      <tr data-persona-row="enrollment"><td><b>Enrollment Specialist</b></td><td>New enrollments — BRE decided queue; checker decision + reason + version</td><td><code>breEligibilityChecker</code> on enrollment</td><td>No</td><td>Read-only — BRE Admin managed</td></tr>
+      <tr data-persona-row="registrar"><td><b>Registrar</b></td><td>Credit Reviews (degree-credit disputes); BRE Holds (read)</td><td>Credit/Aid decision review</td><td><b>Yes — Credit/Aid only, reason code required, logged</b></td><td>Read-only — BRE Admin managed</td></tr>
+      <tr data-persona-row="advisor"><td><b>Education Advisor</b></td><td>Learner 360 read-only BRE summary (outcome + plain-language explanation)</td><td>— (explains, does not run authoring)</td><td>No</td><td>Read-only — BRE Admin managed</td></tr>
+      <tr data-persona-row="ceops"><td><b>CE Ops</b></td><td>BRE Holds, Employer Escalations, cohort/seat outcomes, waitlist</td><td>Cohort/seat checks; hold release on payment confirmation</td><td>No (releases holds, does not override credit)</td><td>Read-only — BRE Admin managed</td></tr>
+      <tr data-persona-row="finance"><td><b>Finance / PSS</b></td><td>Funding Checks; Degree_Financial_Aid vs State_Workforce_Funding split; disbursement readiness</td><td>State funding RT decisions</td><td>No (confirms funding, does not override credit)</td><td>Read-only — BRE Admin managed</td></tr>
+      <tr data-persona-row="breaadmin"><td><b>BRE Admin</b> (named small group)</td><td>Setup BRE — all rule sets, versions, decision log</td><td>Version / publish decision tables</td><td>No operational override (separation: admin changes rules, Registrar overrides cases)</td><td><b>Edit / Version — ONLY this role</b></td></tr>
+    </tbody></table></div>
+  </article>
+
+  <article class="card" style="margin-top:14px" id="breQueuesCard" aria-labelledby="breQueuesH">
+    <h3 id="breQueuesH">BRE work queues — filtered by persona</h3>
+    <p class="queue-filter-note" id="breQueueFilterNote">Showing queues for the selected persona. Every row carries decision / reason / rule / version so the outcome can be explained and replayed.</p>
+    <div id="breQueues" aria-live="polite"></div>
+  </article>
+
+  <article class="card" style="margin-top:14px" id="breSetupCard" aria-labelledby="breSetupH">
+    <h3 id="breSetupH">Setup BRE — decision tables &amp; versions</h3>
+    <p id="breSetupGate" class="note">Read-only — BRE Admin managed. Only the BRE Admin persona can edit or version decision tables.</p>
+    <div class="table-wrap"><table aria-label="BRE rule versions"><thead><tr><th>Rule set</th><th>Version</th><th>Status</th><th>Action</th></tr></thead><tbody id="breVersionList">
+      <tr><td>SUNY_CE_Eligibility</td><td>v1.0-pilot</td><td><span class="badge green">Active</span></td><td><button class="btn btn-sm" data-action="bre-edit-rules" data-ruleset="SUNY_CE_Eligibility">Edit decision table</button></td></tr>
+      <tr><td>SUNY_Payment_Hold</td><td>v1.0-pilot</td><td><span class="badge green">Active</span></td><td><button class="btn btn-sm" data-action="bre-edit-rules" data-ruleset="SUNY_Payment_Hold">Edit decision table</button></td></tr>
+      <tr><td>SUNY_State_Funding_Routing</td><td>v1.0-pilot</td><td><span class="badge green">Active</span></td><td><button class="btn btn-sm" data-action="bre-edit-rules" data-ruleset="SUNY_State_Funding_Routing">Edit decision table</button></td></tr>
+      <tr><td>SUNY_CE_Eligibility</td><td>v1.1-draft</td><td><span class="badge amber">Draft — not active</span></td><td><button class="btn btn-sm" data-action="bre-edit-rules" data-ruleset="SUNY_CE_Eligibility@v1.1-draft">Edit / version draft</button></td></tr>
+    </tbody></table></div>
+    <p class="note">Version process (BRE Admin only): draft a new version → test against the sample CSV rows → activate. Callers keep calling the same rule-set name; past decisions keep the version that produced them. Never silently edit a live version.</p>
+  </article>
+
+  <article class="card" style="margin-top:14px" id="breDecisionLogCard" aria-labelledby="breLogH">
+    <h3 id="breLogH">Decision log — BRE decisions + overrides (audit)</h3>
+    <p style="color:var(--muted);font-size:13px">Every checker run and every override appends here with persona + timestamp. In-org this maps to <code>BRE_Decision__c / BRE_Reason__c / BRE_Rule_Version__c</code> on Order plus override fields (persona, reason code, timestamp).</p>
+    <ol id="breDecisionLog" style="font-size:13px;color:var(--muted);padding-left:20px"></ol>
+  </article>
+
+  <div id="breModalRoot"></div>
+
+  <article class="card" style="margin-top:14px"><h3>Decision Checker — try a scenario</h3>
+    <p style="color:var(--muted)">Pick a preset or change the inputs, then run the decision. Logic below is computed in JavaScript from the same sample decision tables shown on this page.</p>
+    <div role="group" aria-label="Preset scenarios" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <button class="btn btn-sm" data-action="bre-preset" data-preset="employer-cna">Employer-paid CNA</button>
+      <button class="btn btn-sm" data-action="bre-preset" data-preset="selfpay-ce">Self-pay CE</button>
+      <button class="btn btn-sm" data-action="bre-preset" data-preset="degree-aid">Degree aid applicant</button>
+      <button class="btn btn-sm" data-action="bre-preset" data-preset="waitlist-full">Waitlist — cohort full</button>
+    </div>
+    <form id="breForm">
+      <div class="grid2">
+        <div class="field"><span><label for="breCourse">Course type (Product2)</label></span>
+          <select id="breCourse" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px">
+            <option value="NONCREDIT_PM101">Non-Credit — CE PM-101 Project Mgmt Fundamentals (Product2) · $499</option>
+            <option value="NONCREDIT_CNA201">Non-Credit — CE CNA-201 Certified Nursing Assistant Prep (Product2) · $899 sample</option>
+            <option value="FORCREDIT_CS410">For-Credit — CS 410 Machine Learning (Product2) · $1,455 (3 cr)</option>
+          </select></div>
+        <div class="field"><span><label for="breCampus">Campus (Account — Campus RT)</label></span>
+          <select id="breCampus" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px">
+            <option>University at Albany</option><option>SUNY Adirondack</option><option>Buffalo State University</option><option>Stony Brook University</option><option>SUNY Brockport</option><option>Fashion Institute of Technology</option><option>SUNY Canton</option><option>North Campus (sample BU)</option>
+          </select><small style="color:var(--muted)">Representative few — full model filters across all 64 SUNY campuses.</small></div>
+        <div class="field"><span>Employer-sponsored</span>
+          <label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="breEmployer"> Employer-sponsored (employer Account pays)</label></div>
+        <div class="field"><span><label for="breFunding">Funding source</label></span>
+          <select id="breFunding" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px">
+            <option value="SELF_PAY">Self-pay (learner pays)</option>
+            <option value="EMPLOYER">Employer-sponsored</option>
+            <option value="DEGREE_AID">Degree financial aid</option>
+            <option value="STATE_WORKFORCE">State workforce funding (WIOA-style, sample)</option>
+          </select></div>
+        <div class="field"><span><label for="breCohort">Cohort seats</label></span>
+          <select id="breCohort" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px">
+            <option value="OPEN">Open — seats available</option>
+            <option value="FULL">Cohort full — waitlist</option>
+          </select></div>
+      </div>
+      <p style="margin-top:12px"><button type="button" class="btn btn-brand" data-action="bre-run">Run decision →</button> <button type="button" class="btn" data-action="bre-preset" data-preset="selfpay-ce">Reset to Self-pay CE</button></p>
+    </form>
+
+    <div id="breResult" aria-live="polite" style="margin-top:14px">
+      <article class="card" style="border-top:4px solid var(--blue)"><h3>Decision result</h3><p style="color:var(--muted)">Run a decision to see degree credit, aid, PSS record type, learner due, and the logged reason. Default preset on load: Self-pay CE.</p></article>
+    </div>
+    <h4 style="color:var(--navy)">Logged decisions (this session — prototype only)</h4>
+    <ol id="breLog" style="font-size:13px;color:var(--muted);padding-left:20px"></ol>
+  </article>
+
+  <article class="card" style="margin-top:14px" id="breDecisionTablesCard"><h3>Decision Tables — <span id="breTablesGateLabel">read-only (sample rows, SLDS tables)</span></h3><p class="note" id="breTablesGateNote">Read-only — BRE Admin managed.</p><p class="note">Read-only prototype mirror. In-org these would be BRE Decision Tables inside Expression Sets — confirm BRE license/API in-org. Generic only; no API signatures are shown.</p>
+
+    <h4>1 · Credit / Aid Eligibility — SUNY_CE_Eligibility</h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Credit and aid eligibility decision table"><thead><tr><th>Course type</th><th>Funding</th><th>Degree credit?</th><th>Degree aid?</th><th>Reason</th></tr></thead><tbody>
+    <tr><td>Non-Credit (Product2)</td><td>Any</td><td>No</td><td>No</td><td>Non-credit never counts toward degree credit or degree aid.</td></tr>
+    <tr><td>For-Credit (Product2)</td><td>Degree aid</td><td>Yes</td><td>Yes — PSS Degree_Financial_Aid</td><td>For-credit + degree-aid funding.</td></tr>
+    <tr><td>For-Credit</td><td>Self-pay / Employer</td><td>Yes</td><td>No</td><td>Degree credit without degree aid.</td></tr></tbody></table></div>
+
+    <h4>2 · Employer Routing</h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Employer routing decision table"><thead><tr><th>Employer-sponsored?</th><th>Course type</th><th>PSS Record Type</th><th>Learner due</th></tr></thead><tbody>
+    <tr><td>Yes</td><td>Non-Credit</td><td>Employer_Sponsored</td><td>$0 — employer Account invoiced via PSS</td></tr>
+    <tr><td>No</td><td>Non-Credit</td><td>— (none, unless state-funded)</td><td>Course flat fee</td></tr>
+    <tr><td>Yes</td><td>For-Credit</td><td>— (employer billing outside degree aid)</td><td>Per Order; not degree aid</td></tr></tbody></table></div>
+
+    <h4>3 · State Funding</h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="State funding decision table"><thead><tr><th>Funding source</th><th>Course type</th><th>PSS Record Type</th><th>Degree aid?</th></tr></thead><tbody>
+    <tr><td>State workforce funding</td><td>Non-Credit</td><td>State_Workforce_Funding</td><td>No</td></tr>
+    <tr><td>Degree financial aid</td><td>For-Credit</td><td>Degree_Financial_Aid</td><td>Yes</td></tr>
+    <tr><td>Degree financial aid</td><td>Non-Credit</td><td>— (ineligible)</td><td>No — non-credit excluded</td></tr></tbody></table></div>
+
+    <h4>4 · Cohort Seats</h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Cohort seats decision table"><thead><tr><th>Seats</th><th>Enrollment outcome</th><th>Charged now</th></tr></thead><tbody>
+    <tr><td>Open</td><td>Registered</td><td>Per pricing / funding</td></tr>
+    <tr><td>Cohort full</td><td>Waitlist</td><td>$0 due now — not charged until a seat opens</td></tr></tbody></table></div>
+
+    <h4>6 · Lack of Payment — Enrollment Hold — SUNY_Payment_Hold <span class="badge amber">SUNY Pilot rule set (new)</span></h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Payment hold decision table"><thead><tr><th>Priority</th><th>Balance / payer / plan / days</th><th>Hold decision</th><th>Hold type</th><th>Release condition</th><th>Next action</th></tr></thead><tbody>
+    <tr><td>1</td><td>Balance $0</td><td>No Hold</td><td>None</td><td>None — paid in full</td><td>None</td></tr>
+    <tr><td>2</td><td>EmployerSponsored unpaid (any days)</td><td>No Hold — learner</td><td>Employer Billing Escalation</td><td>Employer payment received</td><td>CE Ops / Finance</td></tr>
+    <tr><td>3</td><td>StateWorkforce pending</td><td>No Hold — learner</td><td>Funding Check Escalation</td><td>Funding confirmed / disbursed</td><td>CE Ops / Finance</td></tr>
+    <tr><td>4</td><td>DegreeAid pending</td><td>No Hold — learner</td><td>Funding Check Escalation</td><td>Aid confirmed / disbursed</td><td>Financial Aid / CE Ops</td></tr>
+    <tr><td>5</td><td>Payment plan Current (any age)</td><td>No Hold</td><td>None</td><td>Remain current on plan</td><td>Learner</td></tr>
+    <tr><td>6</td><td>Self-pay, days ≤ GraceDays (10)</td><td>Warning</td><td>Payment Warning</td><td>Pay or enrol in plan</td><td>Learner</td></tr>
+    <tr><td>7</td><td>Self-pay, GraceDays &lt; days ≤ HoldThresholdDays (14)</td><td>Warning</td><td>Payment Warning — Final</td><td>Pay or enrol in plan by day 14</td><td>Learner</td></tr>
+    <tr><td>8</td><td>Self-pay, days &gt; HoldThresholdDays (14), plan None/Late</td><td>Enrollment Hold</td><td>Payment Hold</td><td>Pay in full or be current on a plan</td><td>Learner; CE Ops notified</td></tr></tbody></table></div>
+    <p class="note">SUNY_Payment_Hold (new, SUNY Pilot — not Atlas): a hold never changes learner due; an employer/state bill never creates a learner hold. Hold lands on the Order/Enrollment record + comms — there is no LMS to lock in this pilot. GraceDays/HoldThresholdDays are editable policy values in the interactive mock.</p>
+
+    <h4>5 · Pricing</h4><div class="table-wrap"><table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Pricing decision table"><thead><tr><th>Course</th><th>List price (sample)</th><th>Employer / state-funded</th><th>Degree-aid example</th></tr></thead><tbody>
+    <tr><td>CE PM-101 (Non-Credit)</td><td>$499 flat fee</td><td>$0 learner due</td><td>—</td></tr>
+    <tr><td>CE CNA-201 (Non-Credit)</td><td>$899 sample flat fee</td><td>$0 learner due</td><td>—</td></tr>
+    <tr><td>CS 410 (For-Credit, 3 cr)</td><td>$1,455</td><td>Per Order</td><td>$1,455 − $574 est. aid = $881 learner due (sample)</td></tr></tbody></table></div>
+  </article>
+  <p class="note">SUNY Pilot fictional disclaimer: SUNY campus names are public; learners, courses, prices and seats on this page are fictional pilot sample data, not official SUNY. PSS/BRE names are generic — confirm exact object, BRE license and API in-org.</p>
+</section>
+</main>
+<footer><div>Education Cloud Console — backend Lightning prototype · SUNY Pilot sample data · Objects PSS/Commerce shown generically, confirm in-org · Single-file, offline-capable</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+"use strict";
+try{document.documentElement.classList.add('js-enabled')}catch(e){}
+function safeGet(k){try{return window.localStorage?localStorage.getItem(k):null}catch(e){return null}}
+function safeSet(k,v){try{if(window.localStorage)localStorage.setItem(k,v)}catch(e){}}
+function safeInit(n,f){try{f()}catch(e){try{console.warn('[backend] '+n,e)}catch(_){}}}
+function showView(id,updateHash){
+ if(!document.getElementById('view-'+id)) id='home';
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+id));
+ document.querySelectorAll('[data-nav]').forEach(b=>b.setAttribute('aria-selected',b.dataset.nav===id?'true':'false'));
+ try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}
+ if(updateHash!==false){try{history.replaceState(null,'','#'+id)}catch(e){try{location.hash=id}catch(_){}}}
+ safeSet('hc-backend-view',id);
+ try{const m=document.getElementById('main');if(m)m.focus({preventScroll:true})}catch(e){}
+}
+let toastT;function toast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3400)}
+function switchRecordTab(record,tab){
+ document.querySelectorAll('[data-record="'+record+'"]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab?'true':'false'));
+ ['details','related','activity'].forEach(x=>{const p=document.getElementById('tab-'+record+'-'+x);if(p)p.classList.toggle('active',x===tab)});
+}
+const stageChecklists={
+ 'Lead':['Capture inquiry / Request Info from community','Assign Enrollment Specialist by Campus_Business_Unit__c'],
+ 'Applied':['Application submitted (Application_Reference__c stamped)','Confirm Program_of_Interest__c and start term'],
+ 'Documents Review':['Verify transcript received','Confirm program prerequisites','Optional: aid pre-check with PSS (generic)'],
+ 'Admit Decision':['All Documents Review items complete','Record admit decision','Send decision communication (preview)'],
+ 'Enrolled':['Convert to Learner + Community User — match existing person, no duplicate','Create Program Enrollment and link Converted_Learner__c','Start welcome journey in campus Marketing Cloud BU']
+};
+let appStageIdx=2;
+function setPathStage(stage,idx){
+ appStageIdx=idx;
+ document.querySelectorAll('#appPath li').forEach(li=>{const i=+li.dataset.stageIdx;li.classList.toggle('done',i<idx);li.classList.toggle('current',i===idx);const b=li.querySelector('button');if(b){if(i===idx)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current')}});
+ const badge=document.getElementById('appStageBadge');if(badge)badge.textContent='Stage: '+stage;
+ const fld=document.getElementById('appStageField');if(fld)fld.textContent=stage;
+ const box=document.getElementById('pathChecklist');
+ if(box){const items=stageChecklists[stage]||[];box.innerHTML='<h4 style="color:var(--navy)">Path Coach — '+stage+'</h4><ul class="checklist">'+items.map((x,i)=>'<li>'+(i<idx||idx===4&&stage==='Enrolled'&&i<2?'☑':'☐')+' '+x+'</li>').join('')+'</ul>'}
+}
+function enrollApplicant(){
+ setPathStage('Enrolled',4);
+ const cf=document.getElementById('convertedField');
+ if(cf)cf.innerHTML='Sample Learner (Pilot) — Learner 360 (matched existing person; Community User active, no duplicate created)';
+ toast('Enrolled (preview): Learner + Community User linked — no duplicate person created. Open Learner 360 from Related or the nav.');
+}
+
+const BRE_COURSES={
+ NONCREDIT_PM101:{label:'CE PM-101 Project Mgmt Fundamentals',creditType:'Non-Credit',price:499},
+ NONCREDIT_CNA201:{label:'CE CNA-201 Certified Nursing Assistant Prep',creditType:'Non-Credit',price:899},
+ FORCREDIT_CS410:{label:'CS 410 Machine Learning',creditType:'For-Credit',price:1455}
+};
+function breCompute(inp){
+ const c=BRE_COURSES[inp.course]||BRE_COURSES.NONCREDIT_PM101;
+ const isCredit=c.creditType==='For-Credit';
+ const employer=!!inp.employer||inp.funding==='EMPLOYER';
+ let pss='— (none)',degreeAid='No',due=c.price,reason='';
+ if(inp.cohort==='FULL'){ return {degreeCredit:isCredit?'Yes':'No',degreeAid:isCredit&&inp.funding==='DEGREE_AID'?'Yes':'No',pss:isCredit&&inp.funding==='DEGREE_AID'?'Degree_Financial_Aid':(employer&&!isCredit?'Employer_Sponsored':(inp.funding==='STATE_WORKFORCE'&&!isCredit?'State_Workforce_Funding':'— (none)')),due:0,outcome:'Waitlist',reason:'Cohort full — waitlisted; $0 due now, not charged until a seat opens. '+(isCredit?'For-credit course.':'Non-credit: no degree credit, not degree aid.'),course:c}; }
+ if(!isCredit){
+   if(employer){pss='Employer_Sponsored';due=0;reason='Employer-sponsored non-credit: employer Account pays via PSS (Employer_Sponsored); learner due $0. Non-credit never counts toward degree credit and is not degree aid.'}
+   else if(inp.funding==='STATE_WORKFORCE'){pss='State_Workforce_Funding';due=0;reason='State workforce funding covers this non-credit course via PSS (State_Workforce_Funding); learner due $0 (sample). Not degree aid.'}
+   else if(inp.funding==='DEGREE_AID'){pss='— (none)';due=c.price;reason='Degree aid requested for a non-credit course — ineligible. Non-credit is excluded from degree aid; learner pays the flat fee.'}
+   else {pss='— (none)';due=c.price;reason='Self-pay non-credit: learner pays the flat fee. No degree credit, not degree aid, no PSS funding record.'}
+   return {degreeCredit:'No',degreeAid:'No',pss:pss,due:due,outcome:'Registered',reason:reason,course:c};
+ }
+ // for-credit
+ if(inp.funding==='DEGREE_AID'){return {degreeCredit:'Yes',degreeAid:'Yes',pss:'Degree_Financial_Aid',due:881,outcome:'Registered',reason:'For-credit + degree aid: degree credit Yes, aid via PSS Degree_Financial_Aid; $1,455 − $574 est. aid = $881 learner due (sample).',course:c}}
+ if(employer){return {degreeCredit:'Yes',degreeAid:'No',pss:'— (none)',due:c.price,outcome:'Registered',reason:'For-credit, employer-sponsored billing per Order; degree credit Yes, but this is not degree aid.',course:c}}
+ if(inp.funding==='STATE_WORKFORCE'){return {degreeCredit:'Yes',degreeAid:'No',pss:'— (none)',due:c.price,outcome:'Registered',reason:'For-credit course; state workforce funding shown here does not convert to degree aid in this sample table.',course:c}}
+ return {degreeCredit:'Yes',degreeAid:'No',pss:'— (none)',due:c.price,outcome:'Registered',reason:'For-credit self-pay: degree credit Yes, no degree aid.',course:c};
+}
+function breReadInputs(){return {course:(document.getElementById('breCourse')||{}).value||'NONCREDIT_PM101',campus:(document.getElementById('breCampus')||{}).value||'',employer:!!(document.getElementById('breEmployer')&&document.getElementById('breEmployer').checked),funding:(document.getElementById('breFunding')||{}).value||'SELF_PAY',cohort:(document.getElementById('breCohort')||{}).value||'OPEN'}}
+function breRun(){
+ const inp=breReadInputs(); const r=breCompute(inp); const box=document.getElementById('breResult'); if(!box)return r;
+ const dueTxt='$'+r.due.toLocaleString('en-US');
+ box.innerHTML='<article class="card" style="border-top:4px solid var(--success)"><h3>Decision result — '+r.outcome+'</h3><div class="fields">'
+ +'<div class="field"><span>Degree credit?</span><b>'+r.degreeCredit+'</b></div>'
+ +'<div class="field"><span>Degree aid?</span><b>'+r.degreeAid+'</b></div>'
+ +'<div class="field"><span>PSS Record Type</span><b>'+r.pss+'</b></div>'
+ +'<div class="field"><span>Learner due</span><b>'+dueTxt+'</b></div>'
+ +'<div class="field"><span>Enrollment outcome</span><b>'+r.outcome+'</b></div>'
+ +'<div class="field"><span>Rule set</span><b>SUNY_CE_Eligibility v1</b></div></div>'
+ +'<p style="margin-top:10px"><b>Reason:</b> '+r.reason+'</p>'
+ +'<p class="note">Campus: '+inp.campus+' · Course: '+r.course.label+' ('+r.course.creditType+') · Stored (in-org concept) on Order as decision + reason + version. Confirm BRE license/API in-org.</p></article>';
+ try{logBreDecision('BRE_DECISION','SUNY_CE_Eligibility v1.0-pilot · '+r.course.label+' @ '+inp.campus+' → credit='+r.degreeCredit+', aid='+r.degreeAid+', PSS='+r.pss+', due=$'+r.due+', outcome='+r.outcome)}catch(e){}
+ const log=document.getElementById('breLog'); if(log){const li=document.createElement('li');li.textContent='SUNY_CE_Eligibility v1 · '+r.course.label+' @ '+inp.campus+' → credit='+r.degreeCredit+', aid='+r.degreeAid+', PSS='+r.pss+', due='+dueTxt+', outcome='+r.outcome+' — '+r.reason;log.prepend(li);}
+ try{window.__breLast=r;window.__breCompute=breCompute}catch(e){}
+ return r;
+}
+function brePreset(name){
+ const set=(c,emp,f,co)=>{const ce=document.getElementById('breCourse'),em=document.getElementById('breEmployer'),fu=document.getElementById('breFunding'),ch=document.getElementById('breCohort');if(ce)ce.value=c;if(em)em.checked=emp;if(fu)fu.value=f;if(ch)ch.value=co;};
+ if(name==='employer-cna')set('NONCREDIT_CNA201',true,'EMPLOYER','OPEN');
+ else if(name==='degree-aid')set('FORCREDIT_CS410',false,'DEGREE_AID','OPEN');
+ else if(name==='waitlist-full')set('NONCREDIT_CNA201',false,'SELF_PAY','FULL');
+ else set('NONCREDIT_PM101',false,'SELF_PAY','OPEN');
+ breRun();
+}
+
+/* ===== BRE personas — backend-only gating (actually enforced) ===== */
+const BRE_PERSONAS={
+ enrollment:{label:'Enrollment Specialist',sees:'New enrollments — BRE decided queue; checker decision + reason + version',runs:'breEligibilityChecker on enrollment',canRunChecker:true,canOverride:false,canReleaseHold:false,canReleaseEmployer:false,canConfirmFunding:false,canEditRules:false,queues:['enrollments','holds'],holdReason:'Enrollment Specialist cannot release a payment hold alone — route to CE Ops on payment confirmation.',overrideReason:'Enrollment Specialist cannot override a Credit/Aid decision — route to Registrar.'},
+ registrar:{label:'Registrar',sees:'Credit Reviews (degree-credit disputes); BRE Holds (read, separation of duties)',runs:'Credit/Aid decision review',canRunChecker:true,canOverride:true,canReleaseHold:false,canReleaseEmployer:false,canConfirmFunding:false,canEditRules:false,queues:['credit','holds'],holdReason:'Registrar overrides credit decisions; CE Ops releases payment holds — separation of duties.',overrideReason:''},
+ advisor:{label:'Education Advisor',sees:'Learner 360 read-only BRE summary (eligibility/funding outcome + plain-language explanation)',runs:'— explains outcomes, does not author rules',canRunChecker:false,canOverride:false,canReleaseHold:false,canReleaseEmployer:false,canConfirmFunding:false,canEditRules:false,queues:['summary'],holdReason:'Education Advisor has no payment-hold controls.',overrideReason:'Education Advisor cannot override BRE decisions.'},
+ ceops:{label:'CE Ops',sees:'BRE Holds, Employer Escalations, cohort/seat outcomes, waitlist',runs:'Cohort/seat checks; hold release on payment confirmation',canRunChecker:true,canOverride:false,canReleaseHold:true,canReleaseEmployer:true,canConfirmFunding:true,canEditRules:false,queues:['holds','employer','cohort'],holdReason:'',overrideReason:'CE Ops releases holds; only Registrar overrides Credit/Aid decisions.'},
+ finance:{label:'Finance / PSS',sees:'Funding Checks; Degree_Financial_Aid vs State_Workforce_Funding split; disbursement readiness',runs:'State funding RT decisions',canRunChecker:true,canOverride:false,canReleaseHold:false,canReleaseEmployer:true,canConfirmFunding:true,canEditRules:false,queues:['funding','employer'],holdReason:'Finance/PSS confirms funding; CE Ops releases learner payment holds.',overrideReason:'Finance/PSS cannot override Credit/Aid decisions — route to Registrar.'},
+ breaadmin:{label:'BRE Admin (named small group)',sees:'Setup BRE — all rule sets, versions, decision log',runs:'Version / publish decision tables',canRunChecker:true,canOverride:false,canReleaseHold:false,canReleaseEmployer:false,canConfirmFunding:false,canEditRules:true,queues:['enrollments','credit','holds','employer','funding','cohort'],holdReason:'BRE Admin changes rules, not operational holds — CE Ops releases holds.',overrideReason:'BRE Admin changes rules; Registrar overrides individual Credit/Aid cases.'}
+};
+let brePersona='enrollment';
+const breDecisionLog=[]; // {ts, persona, type, detail}
+const breReleased={}; const breOverridden={};
+const BRE_QUEUES={
+ enrollments:{title:'New enrollments — BRE decided (Enrollment Specialist)',rows:[
+  {id:'ENR-NEW-01',learner:'Sample Learner (Pilot) · 884-1027',item:'CS 410 Machine Learning — For-Credit',decision:'Degree_Eligible_Aid_Review',reason:'[FORCREDIT_AID_REVIEW] For-credit + degree-aid review',rule:'SUNY_CE_Eligibility',version:'v1.0-pilot'},
+  {id:'ENR-NEW-02',learner:'Jordan Lee (sample)',item:'CE PM-101 — Non-Credit',decision:'Not_Degree_Eligible',reason:'[NONCREDIT_NO_DEGREE] Non-credit never counts toward degree credit/aid',rule:'SUNY_CE_Eligibility',version:'v1.0-pilot'}]},
+ credit:{title:'Credit Reviews — degree-credit disputes (Registrar)',rows:[
+  {id:'CR-001',learner:'Priya Nair (sample)',item:'CE PM-101 claimed as degree credit',decision:'Not_Degree_Eligible',reason:'[NONCREDIT_NO_DEGREE] Non-Credit course cannot post degree credit',rule:'SUNY_CE_Eligibility',version:'v1.0-pilot'},
+  {id:'CR-002',learner:'Jordan Lee (sample)',item:'CS 410 aid scope dispute',decision:'Degree_Eligible_Aid_Review',reason:'[FORCREDIT_AID_REVIEW] For-credit, aid review required',rule:'SUNY_CE_Eligibility',version:'v1.0-pilot'}]},
+ holds:{title:'BRE Holds — self-pay hold → CE Ops release (Registrar read, separation of duties)',rows:[
+  {id:'HOLD-001',learner:'Sample Learner (Pilot) · ORD-SUNY-2026-4403',item:'Self-pay balance $499 · 21 days past due · plan None',decision:'Enrollment Hold',reason:'[PAYMENT_HOLD] Self-pay > HoldThresholdDays (14), plan None/Late',rule:'SUNY_Payment_Hold',version:'v1.0-pilot'},
+  {id:'HOLD-002',learner:'A. Sample Learner (fictional)',item:'Self-pay balance $899 · 18 days past due',decision:'Enrollment Hold',reason:'[PAYMENT_HOLD] Self-pay past hold threshold',rule:'SUNY_Payment_Hold',version:'v1.0-pilot'}]},
+ employer:{title:'Employer Escalations — employer billing, NO learner hold (CE Ops / Finance)',rows:[
+  {id:'ESC-EMP-01',learner:'Jordan Lee (sample) — learner NOT held',item:'PSS-PAY-2026-1049 · Workforce Partner · CE PM-101 $499 · Invoiced',decision:'No Hold (learner) — Employer Billing Escalation',reason:'[EMPLOYER_PRECEDENCE] EmployerSponsored unpaid escalates to CE Ops/Finance; learner due $0',rule:'SUNY_Payment_Hold',version:'v1.0-pilot'},
+  {id:'ESC-EMP-02',learner:'5 sponsored learners (sample)',item:'PSS-PAY-2026-1050 · $2,495 · Authorized',decision:'No Hold (learner) — Employer Billing Escalation',reason:'[EMPLOYER_SPONSORED_SEATS] Employer invoiced via PSS Employer_Sponsored',rule:'SUNY_Employer_Paid_Routing',version:'v1.0-pilot'}]},
+ funding:{title:'Funding Checks — Degree_Financial_Aid vs State_Workforce_Funding split (Finance / PSS)',rows:[
+  {id:'FUND-001',learner:'Sample Learner (Pilot)',item:'AWD-SOG-2026-118 · Degree aid · For-Credit only',decision:'Degree_Financial_Aid — disbursement ready',reason:'[DEGREE_AID_FORCREDIT] Active campus + ForCredit + Degree_Aid',rule:'SUNY_State_Funding_Routing',version:'v1.0-pilot',split:'Degree_Financial_Aid'},
+  {id:'FUND-002',learner:'2 learners (sample)',item:'PSS-PAY-2026-1033 · State workforce · Non-Credit CE',decision:'State_Workforce_Funding — funded',reason:'[WORKFORCE_NONCREDIT] NonCredit workforce category + State_Workforce',rule:'SUNY_State_Funding_Routing',version:'v1.0-pilot',split:'State_Workforce_Funding'}]},
+ cohort:{title:'Cohort / Seat outcomes + Waitlist (CE Ops owns waitlist)',rows:[
+  {id:'COH-001',learner:'CE CNA-201 cohort · West Campus',item:'20 / 24 seats · Feb 2 cohort',decision:'Filling',reason:'[FILL_70_89] Fill 70–89%',rule:'SUNY_Cohort_Seats_Waitlist',version:'v1.0-pilot'},
+  {id:'COH-002',learner:'CE HVAC-220 waitlist · North Campus',item:'12 / 16 seats · 4 waiting',decision:'Waitlist',reason:'[FILL_90_PLUS] Fill ≥ 90% — waitlist',rule:'SUNY_Cohort_Seats_Waitlist',version:'v1.0-pilot'}]}
+};
+function breNow(){try{return new Date().toISOString()}catch(e){return 'sample-time'}}
+function logBreDecision(type,detail){
+ const entry={ts:breNow(),persona:brePersona,personaLabel:(BRE_PERSONAS[brePersona]||{}).label||brePersona,type:type,detail:detail};
+ breDecisionLog.unshift(entry);
+ const ol=document.getElementById('breDecisionLog');
+ if(ol){const li=document.createElement('li');li.dataset.logType=type;li.textContent='['+entry.ts+'] '+entry.personaLabel+' ('+entry.persona+') · '+type+' — '+detail;ol.prepend(li);}
+ try{window.__breDecisionLog=breDecisionLog}catch(e){}
+ return entry;
+}
+function breEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function breQueueActions(qkey,row,P){
+ // Advisor: no hold/override controls rendered at all
+ if(brePersona==='advisor')return '<span class="badge">Read-only</span>';
+ let html='';
+ if(qkey==='credit'||qkey==='enrollments'){
+   const dis=P.canOverride?'':' disabled title="'+breEsc(P.overrideReason||P.holdReason)+'" aria-disabled="true"';
+   const tip=P.canOverride?'':' <small style="color:var(--muted)">'+breEsc(P.overrideReason)+'</small>';
+   html+='<button class="btn btn-sm" data-action="bre-override" data-row="'+row.id+'"'+dis+'>Override</button>'+tip;
+ }
+ if(qkey==='holds'){
+   if(breReleased[row.id]) html+=' <span class="badge green">Hold released</span>';
+   else{
+     const dis=P.canReleaseHold?'':' disabled title="'+breEsc(P.holdReason)+'" aria-disabled="true"';
+     const tip=P.canReleaseHold?'':' <small style="color:var(--muted)">'+breEsc(P.holdReason)+'</small>';
+     html+=' <button class="btn btn-sm" data-action="bre-release-hold" data-row="'+row.id+'"'+dis+'>Release hold</button>'+tip;
+   }
+ }
+ if(qkey==='employer'){
+   const dis=P.canReleaseEmployer?'':' disabled title="Only CE Ops / Finance can clear an employer escalation." aria-disabled="true"';
+   html+=' <button class="btn btn-sm" data-action="bre-release-employer" data-row="'+row.id+'"'+dis+'>Confirm employer payment</button>';
+ }
+ if(qkey==='funding'){
+   const dis=P.canConfirmFunding?'':' disabled title="Only Finance/PSS (or CE Ops for workforce checks) can confirm funding." aria-disabled="true"';
+   html+=' <button class="btn btn-sm" data-action="bre-confirm-funding" data-row="'+row.id+'"'+dis+'>Confirm funding</button>';
+ }
+ if(qkey==='cohort') html+=' <span class="badge">CE Ops owns waitlist</span>';
+ return html||'<span class="badge grey">No action</span>';
+}
+function renderBreQueues(){
+ const host=document.getElementById('breQueues'); if(!host)return;
+ const P=BRE_PERSONAS[brePersona];
+ if(brePersona==='advisor'){
+   host.innerHTML='<article class="card" style="border-top:4px solid var(--blue)"><h4>Advisor view — read-only BRE summary</h4><p>Eligibility/funding outcome + plain-language explanation is on <b>Learner 360 → BRE Summary</b>. Advisors see the outcome for Sample Learner (Pilot) — degree aid via Degree_Financial_Aid, non-credit CE excluded from degree credit — with <b>no payment-hold controls in this view</b>.</p><p><button class="btn btn-sm" data-action="nav" data-view="learner">Open Learner 360 BRE summary →</button></p></article>';
+   return;
+ }
+ host.innerHTML=P.queues.map(function(qkey){
+   const q=BRE_QUEUES[qkey]; if(!q)return '';
+   const rows=q.rows.map(function(r){
+     const overridden=breOverridden[r.id]?' <span class="badge amber">Overridden: '+breEsc(breOverridden[r.id])+'</span>':'';
+     return '<tr data-queue-row="'+r.id+'"><td><b>'+breEsc(r.id)+'</b>'+overridden+'</td><td>'+breEsc(r.learner)+'<br><small style="color:var(--muted)">'+breEsc(r.item)+'</small></td><td>'+breEsc(r.decision)+'</td><td>'+breEsc(r.reason)+'</td><td>'+breEsc(r.rule)+'</td><td>'+breEsc(r.version)+'</td><td>'+breQueueActions(qkey,r,P)+'</td></tr>';
+   }).join('');
+   const splitNote=qkey==='funding'?'<p class="note">Split view: <b>Degree_Financial_Aid</b> (for-credit degree aid only) is reported separately from <b>State_Workforce_Funding</b> (non-credit workforce). Employer/workforce PSS amounts are never rolled into degree-aid totals.</p>':'';
+   return '<h4 style="color:var(--navy)">'+breEsc(q.title)+'</h4>'+splitNote+'<div class="table-wrap"><table aria-label="'+breEsc(q.title)+'"><thead><tr><th>Ref</th><th>Learner / Item</th><th>Decision</th><th>Reason</th><th>Rule</th><th>Version</th><th>Action</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+ }).join('');
+}
+let learnerHoldOriginal=null;
+function renderBrePersona(){
+ const P=BRE_PERSONAS[brePersona]||BRE_PERSONAS.enrollment;
+ const sel=document.getElementById('brePersona'); if(sel&&sel.value!==brePersona)sel.value=brePersona;
+ const sum=document.getElementById('brePersonaSummary');
+ if(sum)sum.innerHTML='<p style="margin:0"><b>'+breEsc(P.label)+'</b> · <b>Sees:</b> '+breEsc(P.sees)+' · <b>Runs:</b> '+breEsc(P.runs)+' · <b>Rule access:</b> '+(P.canEditRules?'<b>Edit / Version decision tables (Setup BRE)</b>':'Read-only — BRE Admin managed')+'</p>';
+ const ral=document.getElementById('breRuleAccessLabel'); if(ral)ral.textContent=P.canEditRules?'Edit / Version — BRE Admin':'Read-only — BRE Admin managed';
+ const gate=document.getElementById('breSetupGate'); if(gate)gate.textContent=P.canEditRules?'BRE Admin: you may edit / version decision tables. Draft → test → activate; never silently edit a live version.':'Read-only — BRE Admin managed. Only the BRE Admin persona can edit or version decision tables.';
+ const tl=document.getElementById('breTablesGateLabel'); if(tl)tl.textContent=P.canEditRules?'editable by BRE Admin (sample rows, SLDS tables)':'read-only (sample rows, SLDS tables)';
+ const tn=document.getElementById('breTablesGateNote'); if(tn)tn.textContent=P.canEditRules?'BRE Admin managed — editing here is a prototype preview; in-org this is Setup BRE versioning.':'Read-only — BRE Admin managed.';
+ document.querySelectorAll('[data-action="bre-edit-rules"]').forEach(function(b){
+   if(P.canEditRules){b.removeAttribute('disabled');b.removeAttribute('title');b.removeAttribute('aria-disabled');}
+   else{b.setAttribute('disabled','');b.setAttribute('title','Read-only — BRE Admin managed');b.setAttribute('aria-disabled','true');}
+ });
+ // checker run gating
+ document.querySelectorAll('[data-action="bre-run"]').forEach(function(b){
+   if(P.canRunChecker){b.removeAttribute('disabled');b.removeAttribute('title');}
+   else{b.setAttribute('disabled','');b.setAttribute('title','Education Advisor uses the Learner 360 read-only BRE summary — advisors do not run BRE authoring.');}
+ });
+ // Learner 360 hold controls: advisor => not rendered
+ const lh=document.getElementById('learnerBreHoldControls');
+ if(lh){
+   if(learnerHoldOriginal===null)learnerHoldOriginal=lh.innerHTML;
+   if(brePersona==='advisor'){lh.innerHTML='';lh.style.display='none';}
+   else{lh.style.display=''; if(!lh.innerHTML)lh.innerHTML=learnerHoldOriginal;
+     const btn=lh.querySelector('[data-action="bre-release-hold"]');
+     if(btn){ if(P.canReleaseHold){btn.removeAttribute('disabled');btn.removeAttribute('title');} else {btn.setAttribute('disabled','');btn.setAttribute('title',P.holdReason);} }
+   }
+ }
+ const note=document.getElementById('breQueueFilterNote');
+ if(note)note.textContent='Persona: '+P.label+' — showing queue(s): '+P.queues.join(', ')+'. BRE is backend-only; community users never see this.';
+ renderBreQueues();
+ try{window.__brePersona=brePersona;window.__brePersonas=BRE_PERSONAS}catch(e){}
+}
+function setBrePersona(p){ if(!BRE_PERSONAS[p])return; brePersona=p; renderBrePersona(); }
+function closeBreModal(){const r=document.getElementById('breModalRoot');if(r)r.innerHTML='';}
+function openOverrideModal(rowId){
+ const P=BRE_PERSONAS[brePersona];
+ if(!P.canOverride){toast(P.overrideReason||'Override not permitted for this persona.');return;}
+ const root=document.getElementById('breModalRoot'); if(!root)return;
+ root.innerHTML='<div class="bre-modal-backdrop"><div class="bre-modal" role="dialog" aria-modal="true" aria-labelledby="breOvH"><h3 id="breOvH">Override Credit/Aid decision — '+breEsc(rowId)+'</h3><p style="color:var(--muted);font-size:13px">Registrar override requires a reason code. The override is appended to the decision log with persona + timestamp. Original BRE decision and version remain on record.</p><div class="field"><span><label for="breOverrideReason">Reason code (required)</label></span><select id="breOverrideReason" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px"><option value="">— Select reason code —</option><option value="TRANSCRIPT_VERIFIED">TRANSCRIPT_VERIFIED — transcript verifies credit</option><option value="CATALOG_YEAR_EXCEPTION">CATALOG_YEAR_EXCEPTION</option><option value="TRANSFER_CREDIT_APPROVED">TRANSFER_CREDIT_APPROVED</option></select></div><div class="field"><span><label for="breOverrideNote">Note</label></span><input id="breOverrideNote" type="text" placeholder="Optional note" style="width:100%;padding:9px;border:1px solid #c9c7c5;border-radius:6px"></div><p id="breOverrideError" style="color:#ba0517;font-weight:700;display:none">Reason code is required — select a reason code to save the override.</p><p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-brand" data-action="bre-save-override" data-row="'+breEsc(rowId)+'">Save override</button><button class="btn" data-action="bre-close-modal">Cancel</button></p></div></div>';
+ const sel=document.getElementById('breOverrideReason'); if(sel)sel.focus();
+}
+function submitBreOverride(rowId,reasonCode,note){
+ if(brePersona!=='registrar'){toast('Only Registrar can override.');return false;}
+ const rc=(reasonCode||'').trim();
+ if(!rc){const e=document.getElementById('breOverrideError');if(e)e.style.display='block';return false;}
+ breOverridden[rowId]=rc;
+ logBreDecision('OVERRIDE','Override '+rowId+' by '+BRE_PERSONAS[brePersona].label+' — reason code '+rc+(note?' — '+note:'')+' (original BRE decision preserved, SUNY_CE_Eligibility v1.0-pilot)');
+ closeBreModal(); renderBreQueues(); toast('Override saved to decision log ('+rc+').');
+ return true;
+}
+function openReleaseConfirm(rowId){
+ const root=document.getElementById('breModalRoot'); if(!root)return;
+ root.innerHTML='<div class="bre-modal-backdrop"><div class="bre-modal" role="dialog" aria-modal="true" aria-labelledby="breRelH"><h3 id="breRelH">Release payment hold — '+breEsc(rowId)+'</h3><p style="color:var(--muted);font-size:13px">CE Ops releases a self-pay hold only on payment confirmation. Simulate the payment confirmation to release. Dual-control proposal: holds above the pilot threshold should need CE Ops release + a second confirmer — see BRE-DESIGN.md.</p><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="brePaymentConfirmed"> Payment confirmed (simulation)</label><p id="breReleaseError" style="color:#ba0517;font-weight:700;display:none">Confirm payment first — check “Payment confirmed” to release.</p><p style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-brand" data-action="bre-confirm-release" data-row="'+breEsc(rowId)+'">Release hold</button><button class="btn" data-action="bre-close-modal">Cancel</button></p></div></div>';
+}
+function releaseBreHold(rowId,paymentConfirmed){
+ const P=BRE_PERSONAS[brePersona];
+ if(!P.canReleaseHold){toast(P.holdReason);return false;}
+ if(!paymentConfirmed){
+   if(document.getElementById('breModalRoot')&&!document.getElementById('brePaymentConfirmed'))openReleaseConfirm(rowId);
+   else{const e=document.getElementById('breReleaseError');if(e)e.style.display='block';}
+   return false;
+ }
+ breReleased[rowId]=true;
+ logBreDecision('HOLD_RELEASE','Hold '+rowId+' released by '+P.label+' on simulated payment confirmation (SUNY_Payment_Hold v1.0-pilot)');
+ closeBreModal(); renderBreQueues();
+ const lh=document.getElementById('learnerBreHoldControls'); // keep learner button in sync via re-render
+ renderBrePersona();
+ toast('Payment hold released (payment confirmed — simulation). Logged.');
+ return true;
+}
+try{window.__setBrePersona=setBrePersona;window.__breSubmitOverride=submitBreOverride;window.__breReleaseHold=releaseBreHold;window.__breOpenOverride=openOverrideModal}catch(e){}
+
+function handleAction(el,ev){
+
+ const a=el.dataset.action;
+ if(a==='nav'){ev.preventDefault();showView(el.dataset.view)}
+ else if(a==='record-tab'){switchRecordTab(el.dataset.record,el.dataset.tab)}
+ else if(a==='path-stage'){setPathStage(el.dataset.stage,+el.dataset.idx);toast('Path preview: stage set to '+el.dataset.stage+' — checklist updated (not saved).')}
+ else if(a==='enroll-applicant'){enrollApplicant()}
+ else if(a==='bre-run'){breRun()}
+ else if(a==='bre-override'){if(el.hasAttribute('disabled')){toast(el.title||'Override not permitted for this persona.')}else{openOverrideModal(el.dataset.row)}}
+ else if(a==='bre-save-override'){const rc=(document.getElementById('breOverrideReason')||{}).value||'';const nt=(document.getElementById('breOverrideNote')||{}).value||'';submitBreOverride(el.dataset.row,rc,nt)}
+ else if(a==='bre-release-hold'){if(el.hasAttribute('disabled')){toast(el.title||'Hold release not permitted for this persona.')}else{openReleaseConfirm(el.dataset.row)}}
+ else if(a==='bre-confirm-release'){const cb=document.getElementById('brePaymentConfirmed');releaseBreHold(el.dataset.row,!!(cb&&cb.checked))}
+ else if(a==='bre-release-employer'){if(el.hasAttribute('disabled')){toast(el.title||'Not permitted.')}else{logBreDecision('EMPLOYER_ESCALATION_CLEARED','Employer escalation '+el.dataset.row+' confirmed paid by '+BRE_PERSONAS[brePersona].label+' — learner was never held.');toast('Employer payment confirmed (simulation) — learner was never held. Logged.');}}
+ else if(a==='bre-confirm-funding'){if(el.hasAttribute('disabled')){toast(el.title||'Not permitted.')}else{logBreDecision('FUNDING_CONFIRMED','Funding '+el.dataset.row+' confirmed by '+BRE_PERSONAS[brePersona].label+'.');toast('Funding confirmed (simulation). Logged.');}}
+ else if(a==='bre-edit-rules'){if(el.hasAttribute('disabled')){toast('Read-only — BRE Admin managed')}else{logBreDecision('RULE_VERSION_DRAFT','BRE Admin opened Edit/Version for '+el.dataset.ruleset+' (draft, not activated).');toast('BRE Admin (preview): Edit/Version opened for '+el.dataset.ruleset+' — draft only, live version unchanged.')}}
+ else if(a==='bre-close-modal'){closeBreModal()}
+ else if(a==='bre-preset'){brePreset(el.dataset.preset)}
+ else if(a==='toast'){toast(el.dataset.toast||'Preview action (sample).')}
+}
+safeInit('delegation',()=>{
+ document.addEventListener('click',ev=>{
+  const el=ev.target&&ev.target.closest?ev.target.closest('[data-action]'):null; if(!el)return;
+  try{handleAction(el,ev)}catch(e){try{console.warn(e)}catch(_){}}
+ });
+ document.addEventListener('keydown',ev=>{
+  try{
+   if((ev.key==='Enter'||ev.key===' ')&&ev.target&&ev.target.tagName==='TR'&&ev.target.hasAttribute('data-action')){ev.preventDefault();ev.target.click()}
+  }catch(e){}
+ });
+ window.addEventListener('hashchange',()=>{try{const h=(location.hash||'').slice(1);if(h&&document.getElementById('view-'+h))showView(h,false)}catch(e){}});
+});
+safeInit('path',()=>setPathStage('Documents Review',2));
+safeInit('bre-persona',()=>{
+ const sel=document.getElementById('brePersona');
+ if(sel){sel.addEventListener('change',()=>setBrePersona(sel.value));}
+ renderBrePersona();
+ logBreDecision('BRE_DECISION','Prototype initialised — persona Enrollment Specialist, queues filtered (sample SUNY pilot data).');
+});
+safeInit('bre',()=>{try{breRun()}catch(e){}});
+safeInit('route',()=>{
+ let h='';try{h=(location.hash||'').slice(1)}catch(e){}
+ if(h&&document.getElementById('view-'+h))showView(h,false); else showView('home',false);
+});
+})();
+</script>
+</body>
+</html>
