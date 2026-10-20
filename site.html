@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="data:,">
 <title>SUNY Pilot — Build Showcase</title>
-<meta name="description" content="SUNY Pilot build showcase — fictional sample prototype linking the learner community, backend Lightning console, BRE rules engine, interactive BRE mock, marketing email templates, and data & docs. Sample data only, not official SUNY.">
+<meta name="description" content="SUNY Pilot build showcase — fictional sample prototype linking the learner community, backend Lightning console, BRE rules engine, interactive BRE mock, marketing email templates, and the Lucid data model. Sample data only, not official SUNY.">
 <style>
 :root{--navy:#102a43;--navy2:#0a1f33;--navy3:#1a3f5f;--gold:#f5c542;--gold-dark:#c99700;--cream:#faf7ef;--ink:#102a43;--text:#243b53;--muted:#5b6b7c;--line:#d8dee6;--bg:#f3f5f8;--card:#fff;--ok:#137547;--radius:14px;--shadow:0 10px 28px rgba(16,42,67,.14),0 2px 6px rgba(16,42,67,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Salesforce Sans",Arial,sans-serif}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -46,7 +46,7 @@ a{color:#0b5cab}a:hover{color:#014486}:focus-visible{outline:3px solid #0176d3;o
 h2.sec{color:var(--navy);font-size:24px;margin:26px 0 6px}
 p.sec-sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
 /* Start here */
-.path{list-style:none;counter-reset:step;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.path{list-style:none;counter-reset:step;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .path li{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:var(--radius);padding:16px;box-shadow:0 1px 3px rgba(16,42,67,.06)}
 .path .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--gold);font-weight:900;margin-bottom:9px}
 .path h3{margin:0 0 6px;font-size:15.5px}.path h3 a{color:var(--navy);text-decoration:none}.path h3 a:hover{text-decoration:underline}
@@ -63,22 +63,13 @@ p.sec-sub{color:var(--muted);margin:0 0 16px;max-width:78ch}
 .card .go{font-weight:700;text-decoration:none;font-size:14.5px}
 .card .sublinks{font-size:13.5px;margin-top:8px;line-height:1.7}
 .card .sublinks a{font-weight:600}
-/* Docs */
-.docs{background:var(--navy);border-radius:var(--radius);padding:22px;color:#dbe6f2;margin:8px 0 6px}
-.docs h3{color:#fff;margin:0 0 4px;font-size:19px}
-.docs p{margin:0 0 14px;font-size:14px;color:#b9c9da}
-.docs ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.docs li{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:13px 15px}
-.docs li b{color:#fff;display:block;font-size:14.5px}
-.docs li span{font-size:13px;color:#b9c9da;display:block;margin:3px 0 7px}
-.docs a{color:var(--gold);font-weight:700;text-decoration:none;font-size:13.5px}.docs a:hover{text-decoration:underline}
 .note-box{background:#fff8db;border:1px solid #e6c87a;border-radius:10px;padding:13px 15px;font-size:13.5px;color:#5c4a08;margin:18px 0}
 footer{background:var(--navy2);color:#9fb3c8;margin-top:34px}
 footer .wrap{padding:24px 20px 30px}
 footer b{color:#fff}footer a{color:var(--gold)}
 footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
-@media(max-width:960px){.hero-in{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.path{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}}
-@media(max-width:600px){.cards,.path,.docs ul{grid-template-columns:1fr}.topnav nav{margin-left:0}}
+@media(max-width:960px){.hero-in{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.path{grid-template-columns:1fr}.hero h1{font-size:34px}}
+@media(max-width:600px){.cards,.path{grid-template-columns:1fr}.topnav nav{margin-left:0}}
 </style>
 </head>
 <body>
@@ -97,7 +88,7 @@ footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
       <a href="backend-lightning.html#bre">BRE</a>
       <a href="bre-mock.html">BRE Mock</a>
       <a href="#marketing">Marketing</a>
-      <a href="#docs">Data &amp; Docs</a>
+      <a href="#data-model">Data model</a>
     </nav>
   </div>
 </header>
@@ -125,7 +116,7 @@ footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
 <main class="wrap" id="main">
 
   <h2 class="sec" id="start">Start here — guided path</h2>
-  <p class="sec-sub">Four stops, in order. Each opens in this same tab; use the “← Showcase home” link at the top of the prototype pages (or your back button) to return here.</p>
+  <p class="sec-sub">Three stops, in order. Each opens in this same tab; use the “← Showcase home” link at the top of the prototype pages (or your back button) to return here.</p>
   <ol class="path">
     <li>
       <span class="n" aria-hidden="true">1</span>
@@ -144,12 +135,6 @@ footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
       <h3><a href="backend-lightning.html#psspayment">See the backend PSS record</a></h3>
       <p>Follow that employer payment into the Lightning console: PSS record <b>PSS-PAY-2026-1049</b>, record type <b>Employer_Sponsored</b>.</p>
       <a class="go" href="backend-lightning.html#psspayment">Step 3 · PSS record →</a>
-    </li>
-    <li>
-      <span class="n" aria-hidden="true">4</span>
-      <h3><a href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Read the mapping workbook</a></h3>
-      <p>Finish with the field / object mapping workbook that ties the community, BRE decisions, and PSS records together.</p>
-      <a class="go" href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Step 4 · Workbook →</a>
     </li>
   </ol>
 
@@ -203,41 +188,14 @@ footer p{margin:0 0 8px;font-size:13px;max-width:92ch}
       <a class="go" href="marketing-cloud/">Browse marketing-cloud/ →</a>
     </article>
 
-    <article class="card" id="docs-card">
-      <p class="kicker">6 · Data &amp; docs</p>
-      <h3><a href="#docs">Data &amp; Docs</a></h3>
-      <p>The supporting artefacts behind the prototypes: the Lucid data-model diagram, the mapping workbook, the showcase deck, and the execution document. These are the verified links from the pilot work — they open the live Google / Lucid files.</p>
-      <ul><li>Lucid — data model / ERD view</li><li>Google Sheets — mapping workbook</li><li>Google Slides — deck · Google Docs — execution doc</li></ul>
-      <a class="go" href="#docs">Jump to Data &amp; Docs ↓</a>
+    <article class="card" id="data-model">
+      <p class="kicker">6 · Data model</p>
+      <h3><a href="https://lucid.app/lucidchart/a300e109-1ce1-44e0-8c61-615b32328951/view">Lucid Data Model</a></h3>
+      <p>Lucidchart view of the pilot data model behind the community, BRE, and PSS design. External file — sign-in may be required.</p>
+      <ul><li>Data model / ERD view</li></ul>
+      <a class="go" href="https://lucid.app/lucidchart/a300e109-1ce1-44e0-8c61-615b32328951/view">Open in Lucid →</a>
     </article>
   </div>
-
-  <section class="docs" id="docs" aria-labelledby="docs-h">
-    <h3 id="docs-h">Data &amp; Docs</h3>
-    <p>Verified links from the SUNY Pilot work. External files — sign-in may be required, and contents there are working documents, not part of this static prototype.</p>
-    <ul>
-      <li>
-        <b>Lucid — data model diagram</b>
-        <span>Lucidchart view of the pilot data model behind the community, BRE, and PSS design.</span>
-        <a href="https://lucid.app/lucidchart/a300e109-1ce1-44e0-8c61-615b32328951/view">Open in Lucid →</a>
-      </li>
-      <li>
-        <b>Google Sheets — mapping workbook</b>
-        <span>Field / object mapping workbook (guided-path step 4) tying community, BRE decisions, and PSS records together.</span>
-        <a href="https://docs.google.com/spreadsheets/d/1E1mFy-_1CNR65LGhgxcWh2ylI4M99GpHHgQiB-ZoAoE/edit">Open the workbook →</a>
-      </li>
-      <li>
-        <b>Google Slides — deck</b>
-        <span>The SUNY Pilot showcase / build deck.</span>
-        <a href="https://docs.google.com/presentation/d/1nYzZ-t6hQTCCXyLaJTQaqmzb_DSaaMCfkWcFfWroy7g/edit">Open the deck →</a>
-      </li>
-      <li>
-        <b>Google Docs — execution doc</b>
-        <span>The execution document for the pilot build.</span>
-        <a href="https://docs.google.com/document/d/1hxl6ETIsBIIAVLgHO2pHYCAeQkzIt_9e8GdU8hKS_mg/edit">Open the execution doc →</a>
-      </li>
-    </ul>
-  </section>
 
   <div class="note-box" role="note"><b>How to run this locally:</b> serve this folder with <code>python3 -m http.server 8766</code> and open the published root URL — or simply open <code>site.html</code> from the file system; every internal link is relative and works from <code>file://</code> too.</div>
 
